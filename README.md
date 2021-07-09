@@ -3,10 +3,10 @@ My Implementation of a bot identifier/kicker in Rust. This was designed to be cr
 
 # Usage
 tl;dr:
-Add `bind F7 "exec command"` to autoexec.cfg
-Add `-condebug -conclearlog` to your Steam TF2 launch options.
-Launch TF2.
-Run this program.
+1. Add `bind F7 "exec command"` to autoexec.cfg
+2. Add `-condebug -conclearlog` to your Steam TF2 launch options.
+3. Launch TF2.
+4. Run this program.
 
 
 Before using the program, you'll need to bind your F7 key to run command.cfg, this is done easiest by putting `bind F7 "exec command"` in your autoexec.cfg file and either restarting the game or running `exec autoexec` in the console.
@@ -20,3 +20,8 @@ The `bots.txt` contains the names to match through either direct string match or
 
 # Commands
 When the program is running it'll periodically simulate the keyboard pressing F7, if this key is used for anything or might cause trouble by being pressed when the game is minimised etc, you can pause/resume the program by entering `echo pause` or `echo resume` in the TF2 console. Or you can just close and reopen the program, it just picks up again regardless of if you're in a match or anything so it doesn't really matter.
+
+# Known issues / TODO
+1. Program will try to kick bots on other team + tries to call votes when on cooldown. Currently the program does not check if the bot is on the same team as it does not identify which user is you (yet). This could be fixed by having the user supply their uuid, but I am hoping to leave as little work to the user as possible so maybe if I think of another way, or maybe make supplying your own uuid an optional thing.
+
+2. Storage of bot names is mixed regex and string, maybe I'll add a way to specify which is which just to be safe, but currently I don't believe it'll cause too many problems unless a bot has a weird name.
