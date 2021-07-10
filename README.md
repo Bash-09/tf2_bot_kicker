@@ -25,3 +25,6 @@ When the program is running it'll periodically simulate the keyboard pressing F7
 1. Program will try to kick bots on other team + tries to call votes when on cooldown. Currently the program does not check if the bot is on the same team as it does not identify which user is you (yet). This could be fixed by having the user supply their uuid, but I am hoping to leave as little work to the user as possible so maybe if I think of another way, or maybe make supplying your own uuid an optional thing.
 
 2. Storage of bot names is mixed regex and string, maybe I'll add a way to specify which is which just to be safe, but currently I don't believe it'll cause too many problems unless a bot has a weird name.
+
+# Credits
+This project makes use of modified code from the [Logwatcher](https://github.com/aravindavk/logwatcher) crate.
