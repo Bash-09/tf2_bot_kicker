@@ -24,7 +24,7 @@ Inside the cfg directory is settings.cfg. This file has a few basic settings lik
 # Adding bots to the list
 In the cfg folder there is a file called bots.cfg, this has all the information to identify the bots under a few sections.\
 `name:` has exact names to check for.\
-`regex:` has a number of regexes to match player names against.\
+`regex:` has regexes to match player names against.\
 `uuid:` identifies specific steam accounts that are know to belong to bots.\
 `list:` has files that contain uuids of bot accounts.\
 
