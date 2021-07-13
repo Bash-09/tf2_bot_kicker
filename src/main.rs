@@ -45,7 +45,7 @@ fn main() {
     for d in dirs.iter() {
         if check_directory(d) {
             dir = d;
-            println!("Found TF2 directory, happy gaming!");
+            println!("Found TF2 directory");
             found_dir = true;
             break;
         }
@@ -65,6 +65,8 @@ fn main() {
     // Setup watcher on log file
     let log_file = format!("{}/tf/console.log", dir);
     let mut lw = LogWatcher::register(log_file).unwrap();
+
+    println!("Setup complete, happy gaming!");
 
     lw.watch(&mut move |line: String| {
         if print_console {

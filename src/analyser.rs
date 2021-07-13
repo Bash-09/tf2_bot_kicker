@@ -106,7 +106,7 @@ impl Analyser {
         }
 
         // Refresh server
-        if self.t.intervals() % 15 == 0 {
+        if self.t.intervals() % self.serv.settings.period == 0 {
             self.com.update_info(&mut self.serv);
         }
 

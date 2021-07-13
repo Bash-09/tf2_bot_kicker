@@ -36,12 +36,17 @@ impl LogMatcher {
 
 pub const r_status: &str = r#"^#\s*(\d+)\s"(.*)"\s+\[(U:\d:\d+)\]\s+(\d*:?\d\d:\d\d)\s+\d+\s*\d+\s*(\w+).*$"#;
 pub fn f_status(serv: &mut Server, com: &mut Commander, str: &str, caps: Captures) {
+    let mut state = State::Spawning;
+    if caps[5].eq("active") {
+        state = State::Active;
+    }
     let p = Player {
         userid: caps[1].to_string(),
         name:   caps[2].to_string(),
         uniqueid: caps[3].to_string(),
         time: 0, // Add time conversion
         team: Team::NONE,
+        state,
     };
 
     // println!("{}", p);
@@ -74,6 +79,8 @@ pub fn f_player_connect(serv: &mut Server, com: &mut Commander, str: &str, caps:
     if serv.bot_checker.check_bot_name(&caps[1]) {
         println!("Bot {} detected joining.", &caps[1]);
         com.say(&format!("Bot Alert! {} is joining the game.", &caps[1]));
+        serv.check_bots(com);
+        com.update_info(serv);
     }
 }
 
@@ -92,12 +99,6 @@ pub fn f_user_disconnect(serv: &mut Server, com: &mut Commander, str: &str, caps
 pub const r_list_players: &str = r#"^players\s*$"#;
 pub fn f_list_players(serv: &mut Server, com: &mut Commander, str: &str, caps: Captures) {
     serv.list_players();
-}
-
-pub const r_update_players: &str = r#"^update\s*$"#;
-pub fn f_update_players(serv: &mut Server, com: &mut Commander, str: &str, caps: Captures) {
-    println!("Updating server info due to: {}", str);
-    com.update_info(serv);
 }
 
 pub const r_pause: &str = r#"^pause\s*$"#;

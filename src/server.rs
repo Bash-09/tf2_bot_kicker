@@ -8,22 +8,30 @@ pub mod bot_checker;
 use bot_checker::BotChecker;
 
 use crate::commander::Commander;
+use crate::server::player::State;
+
+mod settings;
+use settings::Settings;
+
+
 
 pub struct Server {
     active: bool,
     pub players: HashMap<String, Player>,
     pub bot_checker: BotChecker,
-    user: Option<String>,
+    pub settings: Settings,
 }
 
 impl Server {
 
     pub fn new() -> Server {
+
+
         Server{
+            settings: Settings::new(),
             active: true,
             players: HashMap::new(),
             bot_checker: BotChecker::new(),
-            user: None,
         }
     }
 
@@ -61,10 +69,34 @@ impl Server {
         let mut red: bool = false;
         let mut blu: bool = false;
 
+        let maybe_user = &self.settings.user;
+
         for p in self.players.values().into_iter() {
-            if self.bot_checker.check_bot_name(&p.name) {
+            if self.bot_checker.check_bot(&p) {
+                // Ignore bots that haven't fully joined yet
+                if p.state == State::Spawning {
+                    continue;
+                }
+
                 bots.push(p);
-                com.kick(p); //May need to disable till I find a better solution
+
+                // If user has provided uuid, only attempt to kick bots on same team
+                if self.settings.kick {
+                    match maybe_user {
+                        None => {com.kick(p);}
+                        Some(user_uuid) => {
+                            match self.players.get(user_uuid) {
+                                None => {com.kick(p);},
+                                Some(user) => {
+                                    if user.team == p.team {
+                                        com.kick(p);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
                 if p.team == Team::RED {
                     red = true;
                 } else if p.team == Team::BLU {
@@ -75,28 +107,29 @@ impl Server {
 
         //self.list_players();
 
-        if bots.is_empty() {return;}
-        // Alert players of bots
-        let mut alert: String = String::from("Bot alert! ");
+        if self.settings.chat_alerts {
+            if bots.is_empty() {return;}
+            // Alert players of bots
+            let mut alert: String = String::from("Bot alert! ");
 
-        if red && blu {
-            alert.push_str("Both teams have BOTS: ");
-        } else if red {
-            alert.push_str("RED Team has BOTS: ");
-        } else if blu {
-            alert.push_str("BLU Team has BOTS: ");
+            if red && blu {
+                alert.push_str("Both teams have BOTS: ");
+            } else if red {
+                alert.push_str("RED Team has BOTS: ");
+            } else if blu {
+                alert.push_str("BLU Team has BOTS: ");
+            } else {
+            }
+
+
+            for p in bots.iter() {
+                alert.push_str(&format!("{} ", p.name));
+            }
+
+            println!("{}", &alert);
+
+            com.say(&alert);
         }
-
-        for p in bots.iter() {
-            alert.push_str(&format!("{} ", p.name));
-        }
-
-        println!("{}", &alert);
-
-        com.say(&alert);
-
-            // Call vote kick
-
 
     }
 
