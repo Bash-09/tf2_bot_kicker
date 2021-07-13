@@ -28,6 +28,8 @@ In the cfg folder there is a file called bots.cfg, this has all the information 
 `uuid:` identifies specific steam accounts that are know to belong to bots.\
 `list:` has files that contain uuids of bot accounts.\
 
+If you encounter a bot that doesn't get picked up automatically, just look for the account's steamid or uuid as shown when you use the `status` command and add it under the uuid section in `bots.cfg`!
+
 When adding an external list, just put it in the cfg folder and add the filename to the list section of bots.cfg, the file doesn't need to be in any particular format or order, as long as it lists steamids as \[U:<zero-width space>x:xxxxx\] etc. The lists that are already there are available online, I found them in the [pazerOP](https://github.com/PazerOP/tf2_bot_detector) repository.
 
 # Commands
