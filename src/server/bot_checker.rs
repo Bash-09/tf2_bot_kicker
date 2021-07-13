@@ -121,6 +121,13 @@ impl BotChecker {
     }
 
     pub fn check_bot(&self, p: &Player) -> bool {
+        for uuid in self.bots_uuid.iter() {
+            if uuid.eq(&p.uniqueid) {
+                println!("Bot matched SteamID");
+                return true;
+            }
+        }
+
         for name in self.bots_name.iter() {
             if name.eq(&p.name) {
                 println!("Bot matched name");
@@ -135,13 +142,6 @@ impl BotChecker {
                     return true;
                 }
                 None    => {}
-            }
-        }
-
-        for uuid in self.bots_uuid.iter() {
-            if uuid.eq(&p.uniqueid) {
-                println!("Bot matched SteamID");
-                return true;
             }
         }
 

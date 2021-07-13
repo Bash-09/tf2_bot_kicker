@@ -80,7 +80,6 @@ pub fn f_player_connect(serv: &mut Server, com: &mut Commander, str: &str, caps:
         println!("Bot {} detected joining.", &caps[1]);
         com.say(&format!("Bot Alert! {} is joining the game.", &caps[1]));
         serv.check_bots(com);
-        com.update_info(serv);
     }
 }
 
