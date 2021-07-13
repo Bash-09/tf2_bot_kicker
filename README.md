@@ -2,6 +2,9 @@
 My Implementation of a bot identifier/kicker in Rust. This was designed to be cross-platform and I don't believe it uses any platform specific libraries, but this has only been tested on Windows so if it doesn't work on Linux then I'll figure that out another time.
 
 # Usage
+No installation is required.
+Download the program [here](https://github.com/Googe14/tf2_bot_kicker/releases/tag/v1.0.1)
+
 tl;dr:
 1. Add `bind F7 "exec command"` to autoexec.cfg
 2. Add `-condebug -conclearlog` to your Steam TF2 launch options.
