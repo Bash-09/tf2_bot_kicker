@@ -34,11 +34,14 @@ fn main() {
     //Get TF2 directory
     let mut dir: &str = "";
 
-    let dirs = vec![
+    let mut dirs = vec![
         "/Program Files (x86)/Steam/Steamapps/Common/Team Fortress 2",
-        "$HOME/.steam/Steam/Steamapps/Common/Team Fortress 2",
         "."
     ];
+
+    let home = home::home_dir().unwrap().to_str().unwrap().to_string();
+    let unix_dir = format!("{}/.steam/steam/steamapps/common/Team Fortress 2", home);
+    dirs.push(&unix_dir);
 
     let mut found_dir = false;
 
@@ -64,24 +67,26 @@ fn main() {
 
     // Setup watcher on log file
     let log_file = format!("{}/tf/console.log", dir);
-    let mut lw = LogWatcher::register(log_file).unwrap();
+    if let Ok(mut lw) = LogWatcher::register(log_file) {
+        println!("Setup complete, happy gaming!");
 
-    println!("Setup complete, happy gaming!");
-
-    lw.watch(&mut move |line: String| {
-        if print_console {
-            println!("Console: {}", line);
-        }
-
-        analyser.update(&line);
-        LogWatcherAction::None
-    });
+        lw.watch(&mut move |line: String| {
+            if print_console {
+                println!("Console: {}", line);
+            }
+    
+            analyser.update(&line);
+            LogWatcherAction::None
+        });
+    } else {
+        println!("No console.log file found. Please be sure to add -condebug to your launch options and then run the game before trying again.");
+    }
 
 }
 
 
 fn check_directory(dir: &str) -> bool {
-    //Attempt to find tf directory
+    //Check if valid TF2 directory
     match read_dir(format!("{}/tf/cfg", dir)) {
         Ok(_) => {return true},
         Err(_)=> {

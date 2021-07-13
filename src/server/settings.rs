@@ -29,7 +29,11 @@ impl Settings {
                 match &caps["setting"] {
                     "user"          => {
                         user = get_uuid(&caps["value"]);
-                        println!("Setting user id to {}", get_uuid(&caps["value"]).unwrap());
+                        if user == None {
+                            println!("No Userid set, this can be set in cfg/settings.cfg with user = [U:1:1234567]");
+                        } else {
+                            println!("Setting user id to {}", get_uuid(&caps["value"]).unwrap());
+                        }
                     },
                     "chat_alerts"   => {
                         if let Some(b) = to_bool(&caps["value"]) {
