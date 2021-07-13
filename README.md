@@ -15,6 +15,9 @@ Before using the program, you'll need to bind your F7 key to run command.cfg, th
 You will also need to add `-condebug` to your game launch options. In your Steam library right click Team Fortress 2 -> Properties and paste it into launch options. This will make the game print the output in the console to a console.log file so the program can keep track of what's happening in the game.
 (Recommended) Optionally you can add `-conclearlog` to your launch options as well to clear this log file whenever the game is restarted. This will mean you will have to launch the bot-kicker *after* you start TF2, but otherwise the console.log file will just get longer and longer.
 
+# Settings and config
+Inside the cfg directory is settings.cfg. This file has a few basic settings like if to alert other players of bots via chat messages, or if to automatically try and kick bots, even how frequently it will do so (in seconds). Here you can also add your own SteamID3 so the program know who you are (This will stop the program from trying to kick bots on the enemy team.)
+
 # Adding bots to the list
 In the cfg folder there is a file called bots.cfg, this has all the information to identify the bots under a few sections.\
 `name:` has exact names to check for.\
