@@ -24,11 +24,13 @@ Inside the cfg directory is settings.cfg. This file has a few basic settings lik
 # Adding bots to the list
 In the cfg folder there is a file called bots.cfg, this has all the information to identify the bots under a few sections.\
 `name:` has exact names to check for.\
-`regex:` has a number of regexes to match player names against.\
+`regex:` has regexes to match player names against.\
 `uuid:` identifies specific steam accounts that are know to belong to bots.\
 `list:` has files that contain uuids of bot accounts.\
 
-When adding an external list, just put it in the cfg folder and add the filename to the list section of bots.cfg, the file doesn't need to be in any particular format or order, as long as it lists steamids as \[U:<zero-width space>x:xxxxx\] etc. The lists that are already there are available online, I found them in the \[pazerOP\](https://github.com/PazerOP/tf2_bot_detector) repository.
+If you encounter a bot that doesn't get picked up automatically, just look for the account's steamid or uuid as shown when you use the `status` command and add it under the uuid section in `bots.cfg`!
+
+When adding an external list, just put it in the cfg folder and add the filename to the list section of bots.cfg, the file doesn't need to be in any particular format or order, as long as it lists steamids as \[U:<zero-width space>x:xxxxx\] etc. The lists that are already there are available online, I found them in the [pazerOP](https://github.com/PazerOP/tf2_bot_detector) repository.
 
 # Commands
 When the program is running it'll periodically simulate the keyboard pressing F7, if this key is used for anything or might cause trouble by being pressed when the game is minimised etc, you can pause/resume the program by entering `echo pause` or `echo resume` in the TF2 console. Or you can just close and reopen the program, it just picks up again regardless of if you're in a match or anything so it doesn't really matter.
