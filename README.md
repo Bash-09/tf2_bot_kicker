@@ -19,11 +19,11 @@ You will also need to add `-condebug` to your game launch options. In your Steam
 (Recommended) Optionally you can add `-conclearlog` to your launch options as well to clear this log file whenever the game is restarted. This will mean you will have to launch the bot-kicker *after* you start TF2, but otherwise the console.log file will just get longer and longer.
 
 # Settings and config
-Inside the cfg folder is settings.cfg, you can change some basic settings here.
-`user` - Add your SteamID3 (like from when you use the status command in-game) to stop trying to kick bots on the enemy team.
-`tf2_directory` - Is the location where TF2 is installed. If the game is not installed in the default location you will have to change this. (Or you can run the program in the TF2 folder without changing this setting.)
-`chat_alerts` - true/false if you want messages in chat to alert other players of bots.
-`kick` - true/false if you want to automatically call votekicks on bots. (There is no way to determine when a vote is running or if you are on cooldown, so it may attempt to call votekicks even when you cannot)
+Inside the cfg folder is settings.cfg, you can change some basic settings here.\
+`user` - Add your SteamID3 (like from when you use the status command in-game) to stop trying to kick bots on the enemy team.\
+`tf2_directory` - Is the location where TF2 is installed. If the game is not installed in the default location you will have to change this. (Or you can run the program in the TF2 folder without changing this setting.)\
+`chat_alerts` - true/false if you want messages in chat to alert other players of bots.\
+`kick` - true/false if you want to automatically call votekicks on bots. (There is no way to determine when a vote is running or if you are on cooldown, so it may attempt to call votekicks even when you cannot)\
 `period` - Integer Time in seconds between each alert/kick attempt
 
 # Adding bots to the list
