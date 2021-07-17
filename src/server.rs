@@ -14,23 +14,28 @@ mod settings;
 use settings::Settings;
 
 
+pub const COM_STATUS: &str = "status";
+pub const COM_LOBBY: &str = "tf_lobby_debug";
 
 pub struct Server {
     active: bool,
     pub players: HashMap<String, Player>,
-    pub bot_checker: BotChecker,
     pub settings: Settings,
+    pub com: Commander,
+    pub bot_checker: BotChecker,
 }
 
 impl Server {
 
     pub fn new() -> Server {
-
+        let settings = Settings::new();
+        let com = Commander::new(&settings.directory);
 
         Server{
-            settings: Settings::new(),
             active: true,
-            players: HashMap::new(),
+            players: HashMap::with_capacity(24),
+            settings,
+            com,
             bot_checker: BotChecker::new(),
         }
     }
@@ -52,10 +57,6 @@ impl Server {
         self.active
     }
 
-    pub fn add(&mut self, p: Player) {
-        self.players.insert(p.uniqueid.clone(), p);
-    }
-
     pub fn list_players(&self) {
         println!("Listing players:");
         for p in self.players.values() {
@@ -64,72 +65,130 @@ impl Server {
     }
 
 
-    pub fn check_bots(&mut self, com: &mut Commander) {
-        let mut bots: Vec<&Player> = Vec::new();
-        let mut red: bool = false;
-        let mut blu: bool = false;
+    pub fn get_bots(&self) -> Vec<&Player> {
 
-        let maybe_user = &self.settings.user;
+        let mut bots: Vec<&Player> = Vec::new();
 
         for p in self.players.values().into_iter() {
-            if self.bot_checker.check_bot(&p) {
-                // Ignore bots that haven't fully joined yet
-                if p.state == State::Spawning {
-                    continue;
-                }
-
+            if p.bot {
                 bots.push(p);
+            }
+        }
 
-                // If user has provided uuid, only attempt to kick bots on same team
-                if self.settings.kick {
-                    match maybe_user {
-                        None => {com.kick(p);}
-                        Some(user_uuid) => {
-                            match self.players.get(user_uuid) {
-                                None => {com.kick(p);},
-                                Some(user) => {
-                                    if user.team == p.team {
-                                        com.kick(p);
-                                    }
-                                }
-                            }
-                        }
+        bots
+    }
+
+    pub fn kick_bots(&mut self) {
+        if !self.settings.kick {
+            return;
+        }
+
+        let mut bots: Vec<&Player> = Vec::new();
+
+        for p in self.players.values().into_iter() {
+            //println!("{}", p);
+            if p.bot {
+                bots.push(p);
+            }
+        }
+        bots = bots.into_iter().filter(|p| {
+            p.state == State::Active && p.accounted
+        }).collect();
+
+        for p in bots {
+            match &self.settings.user {
+                None => {
+                    println!("Calling votekick.");
+                    self.com.run_command("echo calling votekick");
+                    println!("{}", p);
+                    self.com.kick(p);
+                }
+                Some(id) => {
+                    if p.team == self.players.get(id).unwrap().team {
+                        self.com.kick(p);
                     }
                 }
-                
-                if p.team == Team::RED {
-                    red = true;
-                } else if p.team == Team::BLU {
-                    blu = true
-                }
+            }
+        }
+    }
+
+
+    pub fn announce_bots(&mut self) {
+        let mut bots: Vec<&Player> = Vec::new();
+        for p in self.players.values().into_iter() {
+            if p.bot {
+                bots.push(p);
+            }
+        }
+        bots = bots.into_iter().filter(|p| {
+            p.state == State::Active && p.accounted
+        }).collect();
+
+        if bots.is_empty() {
+            return;
+        }
+
+        let mut red = false;
+        let mut blu = false;
+
+        for p in bots.iter() {
+            if p.team == Team::RED {
+                red = true;
+            } else if p.team == Team::BLU {
+                blu = true;
             }
         }
 
-        //self.list_players();
+        let mut alert: String = String::from("Bot alert! ");
+
+        if red && blu {
+            alert.push_str("Both teams have BOTS: ");
+        } else if red {
+            alert.push_str("RED Team has BOTS: ");
+        } else if blu {
+            alert.push_str("BLU Team has BOTS: ");
+        } else {
+            alert.push_str("There are bots: ");
+        }
+
+        println!("Bots on server: ");
+        for p in bots.iter() {
+            alert.push_str(&format!("{} ", p.name));
+            println!("{}", p);
+        }
 
         if self.settings.chat_alerts {
-            if bots.is_empty() {return;}
-            // Alert players of bots
-            let mut alert: String = String::from("Bot alert! ");
-
-            if red && blu {
-                alert.push_str("Both teams have BOTS: ");
-            } else if red {
-                alert.push_str("RED Team has BOTS: ");
-            } else if blu {
-                alert.push_str("BLU Team has BOTS: ");
-            } else {
-            }
-
-
-            for p in bots.iter() {
-                alert.push_str(&format!("{} ", p.name));
-            }
-
-            println!("{}", &alert);
-
-            com.say(&alert);
+            self.com.say(&alert);
         }
+    }
+
+
+    pub fn refresh(&mut self) {
+        println!("Refreshing server.");
+
+        for p in self.players.values_mut().into_iter() {
+            p.accounted = false;
+        }
+
+        self.com.clear();
+        self.com.push(COM_STATUS);
+        self.com.push("wait 200");
+        self.com.push(COM_LOBBY);
+        self.com.push("wait 100");
+        self.com.push("echo refreshcomplete");
+        self.com.run();
+
+    }
+
+    pub fn prune(&mut self) {
+        self.players.retain(|_, v| {
+            if !v.accounted && v.bot {
+                println!("Bot disconnected: {}", v.name);
+            }
+            v.accounted
+        });
+
+        self.com.run_command("wait 100; echo prunecomplete");
 
     }
 

@@ -6,6 +6,7 @@ pub struct Timer {
     interval_duration: f32,
     current: f32,
     intervals: u32,
+    pub done: bool,
 }
 
 impl Timer {
@@ -16,6 +17,7 @@ impl Timer {
             interval_duration: 1.0,
             current: 0.0,
             intervals: 0,
+            done: false,
         }
 
     }
@@ -31,6 +33,7 @@ impl Timer {
         if self.current > self.interval_duration {
             self.current = 0.0;
             self.intervals += 1;
+            self.done = false;
             return true;
         }
 

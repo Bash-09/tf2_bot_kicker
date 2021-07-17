@@ -39,18 +39,22 @@ impl std::fmt::Display for State {
 
 
 pub struct Player {
-
     pub userid: String,
     pub name: String,
-    pub uniqueid: String, 
-    pub time: u32,
+    pub steamid: String, 
+    pub time: u32, // Not implemented
     pub team: Team,
     pub state: State,
-
+    pub bot: bool,
+    pub accounted: bool,
 }
 
 impl std::fmt::Display for Player {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{} - {}, \tUID: {}, UUID: {}, Time: {}, State: {}", self.team, self.name, self.userid, self.uniqueid, self.time, self.state)
+        let mut bot = "No";
+        if self.bot {
+            bot = "Yes";
+        }
+        write!(f, "{} - {}, \tUID: {}, SteamID: {}, State: {}, Bot: {}", self.team, self.name, self.userid, self.steamid, self.state, bot)
     }
 }

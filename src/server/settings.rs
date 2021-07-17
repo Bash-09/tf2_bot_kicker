@@ -6,6 +6,7 @@ pub struct Settings {
     pub chat_alerts: bool,
     pub kick: bool,
     pub period: u32,
+    pub directory: String,
 }
 
 impl Settings {
@@ -15,6 +16,7 @@ impl Settings {
         let mut chat_alerts = true;
         let mut kick = true;
         let mut period: u32 = 15;
+        let mut directory: String = String::from(".");
 
         let filename = "cfg/settings.cfg";
 
@@ -56,6 +58,9 @@ impl Settings {
                             period = *p;
                             println!("Setting period to {} seconds", period);
                         }
+                    },
+                    "tf2_directory" => {
+                        directory = caps["value"].to_string();
                     }
                     _ => {}
                 }
@@ -68,6 +73,7 @@ impl Settings {
             chat_alerts,
             kick,
             period,
+            directory,
         }
     }
 

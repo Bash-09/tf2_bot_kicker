@@ -1,4 +1,3 @@
-use crate::commander::Commander;
 use crate::timer::*;
 use crate::{regexes::*, server::Server};
 use regex::Regex;
@@ -16,14 +15,13 @@ use regex::Regex;
 
 pub struct Analyser {
     t: Timer,
-    com: Commander,
-    serv: Server,
+    pub serv: Server,
     reg: Vec<LogMatcher>,
 }
 
 impl Analyser {
 
-    pub fn new(com: Commander) -> Analyser {
+    pub fn new() -> Analyser {
 
         let mut reg: Vec<LogMatcher> = Vec::new();
 
@@ -52,10 +50,6 @@ impl Analyser {
             Regex::new(r_list_players).unwrap(),
             f_list_players
         ));
-        // reg.push(LogMatcher::new(
-        //     Regex::new(r_update_players).unwrap(),
-        //     f_update_players
-        // ));
         reg.push(LogMatcher::new(
             Regex::new(r_pause).unwrap(),
             f_pause
@@ -72,11 +66,18 @@ impl Analyser {
             Regex::new(r_update).unwrap(),
             f_update
         ));
+        reg.push(LogMatcher::new(
+            Regex::new(r_inactive).unwrap(),
+            f_inactive
+        ));
+        reg.push(LogMatcher::new(
+            Regex::new(r_refresh_complete).unwrap(),
+            f_refresh_complete
+        ));
 
 
         Analyser {
             t: Timer::new(),
-            com,
             serv: Server::new(),
             reg,
         }
@@ -91,7 +92,7 @@ impl Analyser {
             match r.r.captures(string) {
                 None => {},
                 Some(c) => {
-                    (r.f)(&mut self.serv, &mut self.com, string, c);
+                    (r.f)(&mut self.serv, string, c);
                 }
             }
         }
@@ -106,8 +107,9 @@ impl Analyser {
         }
 
         // Refresh server
-        if self.t.intervals() % self.serv.settings.period == 0 {
-            self.com.update_info(&mut self.serv);
+        if self.t.intervals() % self.serv.settings.period == 0 && !self.t.done {
+            self.serv.refresh();
+            self.t.done = true;
         }
 
     }

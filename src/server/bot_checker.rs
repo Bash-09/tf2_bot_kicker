@@ -116,36 +116,21 @@ impl BotChecker {
                 None    => {}
             }
         }
+        false
+    }
 
+    pub fn check_bot_steamid(&self, player_steamid: &str) -> bool {
+        for uuid in self.bots_uuid.iter() {
+            if uuid.eq(player_steamid) {
+                return true;
+            }
+        }
         false
     }
 
     pub fn check_bot(&self, p: &Player) -> bool {
-        for uuid in self.bots_uuid.iter() {
-            if uuid.eq(&p.uniqueid) {
-                println!("Bot matched SteamID");
-                return true;
-            }
-        }
-
-        for name in self.bots_name.iter() {
-            if name.eq(&p.name) {
-                println!("Bot matched name");
-                return true;
-            }
-        }
-
-        for regx in self.bots_regx.iter() {
-            match regx.captures(&p.name) {
-                Some(_) => {
-                    println!("Bot matched regex");
-                    return true;
-                }
-                None    => {}
-            }
-        }
-
-        false
+        self.check_bot_steamid(&p.steamid) ||
+        self.check_bot_name(&p.name)
     }
 
 }

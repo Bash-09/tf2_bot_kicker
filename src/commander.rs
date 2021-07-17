@@ -1,10 +1,10 @@
-use std::{fs::{File, OpenOptions}};
+use std::{fs::{File, OpenOptions, read_dir}};
 use std::io::prelude::*;
 
 extern crate enigo;
 use enigo::{Enigo, KeyboardControllable, Key};
 
-use crate::server::{Server, player::Player};
+use crate::server::player::Player;
 
 pub struct Commander {
     file: File,
@@ -13,13 +13,22 @@ pub struct Commander {
     keyboard: Enigo,
 }
 
-pub const COM_STATUS: &str = "status";
-pub const COM_LOBBY: &str = "tf_lobby_debug";
-
 impl Commander {
 
-    pub fn new(file_name: String) -> Commander {
+    pub fn new(directory: &String) -> Commander {
+        let mut dir: &String = &String::from(".");
 
+        if check_directory(directory) {
+            dir = directory;
+        } else {
+            println!("Could not find tf2 directory in {}", directory);
+            if !check_directory(".") {
+                println!("Could not find tf2 directory in current folder. Please set a valid path in settings.cfg or run this program from the Team Fortress 2 folder.");
+                std::process::exit(1);
+            }
+        }
+
+        let file_name = format!("{}/tf/cfg/command.cfg", dir);
 
         let com = Commander {
             file: create_command_file(&file_name),
@@ -57,7 +66,6 @@ impl Commander {
 
     /// Clears queue and runs a command
     pub fn run_command(&mut self, command: &str) {
-        //println!("Running \"{}\"", command);
         self.clear();
         self.push(command);
         self.run();
@@ -72,18 +80,6 @@ impl Commander {
     }
 
 
-    pub fn update_info(&mut self, serv: &mut Server) {
-        println!("Refreshing server info.");
-        serv.clear();
-        self.clear();
-        self.push(COM_STATUS);
-        self.push("wait 200");
-        self.push(COM_LOBBY);
-        self.push("wait 100");
-        self.push("echo updatecomplete");
-        self.run();
-    }
-
 }
 
 
@@ -95,4 +91,14 @@ fn create_command_file(file_name: &str) -> File {
         .truncate(true)
         .open(file_name)
         .unwrap()
+}
+
+fn check_directory(dir: &str) -> bool {
+    //Check if valid TF2 directory
+    match read_dir(format!("{}/tf/cfg", dir)) {
+        Ok(_) => {return true},
+        Err(_)=> {
+            return false;
+        }
+    }
 }
