@@ -16,7 +16,7 @@ pub enum LogWatcherAction {
 
 pub struct LogWatcher {
     filename: String,
-    created: SystemTime,
+    // created: SystemTime,
     pos: u64,
     reader: BufReader<File>,
     finish: bool,
@@ -42,7 +42,7 @@ impl LogWatcher {
         reader.seek(SeekFrom::Start(pos)).unwrap();
         Ok(LogWatcher {
             filename: filename.as_ref().to_string_lossy().to_string(),
-            created: metadata.created().unwrap(),
+            // created: metadata.created().unwrap(),
             pos: pos,
             reader: reader,
             finish: false,
@@ -56,26 +56,26 @@ impl LogWatcher {
         loop {
             match File::open(&self.filename) {
                 Ok(x) => {
-                    let f = x;
-                    let metadata = match f.metadata() {
-                        Ok(m) => m,
-                        Err(_) => {
-                            sleep(Duration::new(1, 0));
-                            continue;
-                        }
-                    };
-                    //Check if file needs to be rotated
-                    if metadata.created().unwrap() != self.created {
-                        self.finish = true;
-                        self.watch(callback);
-                        self.finish = false;
-                        println!("reloading log file");
-                        self.reader = BufReader::new(f);
-                        self.pos = 0;
-                        self.created = metadata.created().unwrap();
-                    } else {
+                    // let f = x;
+                    // let metadata = match f.metadata() {
+                    //     Ok(m) => m,
+                    //     Err(_) => {
+                    //         sleep(Duration::new(1, 0));
+                    //         continue;
+                    //     }
+                    // };
+                    // //Check if file needs to be rotated
+                    // if metadata.created().unwrap() != self.created {
+                    //     self.finish = true;
+                    //     self.watch(callback);
+                    //     self.finish = false;
+                    //     println!("reloading log file");
+                    //     self.reader = BufReader::new(f);
+                    //     self.pos = 0;
+                    //     self.created = metadata.created().unwrap();
+                    // } else {
                         sleep(Duration::new(0, sleep_time));
-                    }
+                    // }
                     break;
                 }
                 Err(err) => {
@@ -112,7 +112,7 @@ impl LogWatcher {
                         if self.finish {
                             break;
                         } else {
-                            self.reopen_if_log_rotated(callback);
+                            //self.reopen_if_log_rotated(callback);
                             callback(String::new());
                             self.reader.seek(SeekFrom::Start(self.pos)).unwrap();
                         }
