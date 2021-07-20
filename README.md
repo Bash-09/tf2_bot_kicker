@@ -26,7 +26,7 @@ Inside the cfg folder is settings.cfg, you can change some basic settings here.\
 `user` - Add your SteamID3 (like from when you use the status command in-game) to stop trying to kick bots on the enemy team.\
 `tf2_directory` - Is the location where TF2 is installed. If the game is not installed in the default location you will have to change this. (Or you can run the program in the TF2 folder without changing this setting.)\
 `chat_reminders` - true/false if you want regular messages in chat to alert other players of current connected bots.\
-`join_alerts` - true/false if you want chat messages that say when a bot is joining the server (This can occasionally miss bots if the period is set too high).
+`join_alerts` - true/false if you want chat messages that say when a bot is joining the server (This can occasionally miss bots if the period is set too high).\
 `kick` - true/false if you want to automatically call votekicks on bots. (There is no way to determine when a vote is running or if you are on cooldown, so it may attempt to call votekicks even when you cannot)\
 `period` - Integer Time in seconds between server refreshes (each alert/kick attempt)
 
