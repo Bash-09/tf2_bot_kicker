@@ -3,7 +3,7 @@ My Implementation of a bot identifier/kicker in Rust. This was designed to be cr
 
 # Usage
 No installation is required.
-Download the program [here](https://github.com/Googe14/tf2_bot_kicker/releases/tag/v1.0.1)
+Download the program [here](https://github.com/Googe14/tf2_bot_kicker/releases)
 
 tl;dr:
 1. Add `bind F7 "exec command"` to autoexec.cfg
