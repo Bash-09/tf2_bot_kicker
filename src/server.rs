@@ -64,7 +64,7 @@ impl Server {
         }
     }
 
-
+    
     pub fn get_bots(&self) -> Vec<&Player> {
 
         let mut bots: Vec<&Player> = Vec::new();
@@ -78,6 +78,9 @@ impl Server {
         bots
     }
 
+    /// Call a votekick on any players detected as bots.
+    /// If userid is set in cfg/settings.cfg then it will only attempt to call vote on bots in the same team
+    /// There is no way of knowing if a vote is in progress or the user is on cooldown so votes will still be attempted
     pub fn kick_bots(&mut self) {
         if !self.settings.kick {
             return;
@@ -86,7 +89,6 @@ impl Server {
         let mut bots: Vec<&Player> = Vec::new();
 
         for p in self.players.values().into_iter() {
-            //println!("{}", p);
             if p.bot {
                 bots.push(p);
             }
@@ -112,7 +114,7 @@ impl Server {
         }
     }
 
-
+    /// Print bots to console and send chat message in-game if necessary of current bots
     pub fn announce_bots(&mut self) {
         let mut bots: Vec<&Player> = Vec::new();
         for p in self.players.values().into_iter() {
@@ -128,41 +130,48 @@ impl Server {
             return;
         }
 
-        let mut red = false;
-        let mut blu = false;
+        let mut invaders = false;
+        let mut defenders = false;
 
         for p in bots.iter() {
-            if p.team == Team::RED {
-                red = true;
-            } else if p.team == Team::BLU {
-                blu = true;
+            if p.team == Team::DEFENDERS {
+                defenders = true;
+            } else if p.team == Team::INVADERS {
+                invaders = true;
             }
         }
 
         let mut alert: String = String::from("Bot alert! ");
 
-        if red && blu {
+        if invaders && defenders {
             alert.push_str("Both teams have BOTS: ");
-        } else if red {
-            alert.push_str("RED Team has BOTS: ");
-        } else if blu {
-            alert.push_str("BLU Team has BOTS: ");
+        } else if let Some(userid) = &self.settings.user {
+            if let Some(p) = self.players.get(userid) {
+                if (p.team == Team::INVADERS && invaders) || (p.team == Team::DEFENDERS && defenders) {
+                    alert.push_str("Our team has BOTS: ");
+                } else {
+                    alert.push_str("Enemy team has BOTS: ");
+                }
+            } else {
+                alert.push_str("The server has BOTS: ");
+            }
         } else {
-            alert.push_str("There are bots: ");
+            alert.push_str("The server has BOTS: ");
         }
 
         println!("Bots on server: ");
-        for p in bots.iter() {
+        for p in bots {
             alert.push_str(&format!("{} ", p.name));
             println!("{}", p);
         }
 
-        if self.settings.chat_alerts {
+        if self.settings.chat_reminders {
             self.com.say(&alert);
         }
     }
 
 
+    /// Update local info on server players
     pub fn refresh(&mut self) {
         println!("Refreshing server.");
 
@@ -180,6 +189,8 @@ impl Server {
 
     }
 
+    /// Remove players who aren't present on the server anymore
+    /// (This method will be called automatically in a rexes command)
     pub fn prune(&mut self) {
         self.players.retain(|_, v| {
             if !v.accounted && v.bot {

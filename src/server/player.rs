@@ -1,10 +1,10 @@
 use core::fmt;
 
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Clone, Copy)]
 pub enum Team {
-    RED,
-    BLU,
+    DEFENDERS,
+    INVADERS,
     NONE,
 }
 
@@ -12,9 +12,9 @@ impl std::fmt::Display for Team {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let out: &str;
         match self {
-            Team::RED => {out = "RED"},
-            Team::BLU => {out = "BLU"},
-            Team::NONE => {out = "NONE"},
+            Team::DEFENDERS => {out = "DEFEND"},
+            Team::INVADERS  => {out = "INVADE"},
+            Team::NONE      => {out = "NONE  "},
         }
         write!(f, "{}", out)
     }
@@ -30,7 +30,7 @@ impl std::fmt::Display for State {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let out: &str;
         match self {
-            State::Active => {out = "Active"},
+            State::Active   => {out = "Active  "},
             State::Spawning => {out = "Spawning"},
         }
         write!(f, "{}", out)

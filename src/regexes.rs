@@ -26,10 +26,10 @@ impl LogMatcher {
     Useful commands:
         status
         tf_lobby_debug
-        tf_party_debug
+        tf_party_debug //Not sure if this is actually useful, not really necessary
 
         callvote kick <userid>
-        vote option<1/2>
+        vote option<1/2> // Can't really use
 
 */
 
@@ -58,6 +58,10 @@ pub fn f_status(serv: &mut Server, str: &str, caps: Captures) {
         }
     }
 
+    // if bot && serv.settings.chat_alerts && !serv.players.contains_key(&steamid) {
+    //     serv.com.say(&format!("Bot alert! {} is joining the game!", name));
+    // }
+
     let p = Player {
         userid: caps[1].to_string(),
         name,
@@ -78,14 +82,36 @@ pub fn f_lobby(serv: &mut Server, str: &str, caps: Captures) {
     let mut team = Team::NONE;
 
     match &caps[3] {
-        "INVADERS" => {team = Team::BLU},
-        "DEFENDERS" => {team = Team::RED},
+        "INVADERS" => {team = Team::INVADERS},
+        "DEFENDERS" => {team = Team::DEFENDERS},
         _ => {},
+    }
+
+    let mut user_team: Option<Team> = None;
+    if let Some(userid) = &serv.settings.user {
+        match serv.players.get(userid) {
+            None => {},
+            Some(p) => {user_team = Some(p.team);}
+        }
     }
 
     match serv.players.get_mut(&caps[2].to_string()) {
         None => {},
-        Some(p) => {
+        Some(p) => 
+        {
+            // Alert server of bot joining
+            if p.state == State::Spawning && p.team != team && p.bot && serv.settings.join_alert {
+                if let Some(ut) = user_team {
+                    if ut == team {
+                        serv.com.say(&format!("Bot alert! {} is joining our team.", p.name));
+                    } else {
+                        serv.com.say(&format!("Bot alert! {} is joining the enemy team.", p.name));
+                    }
+                } else {
+                    serv.com.say(&format!("Bot alert! {} is joining the game.", p.name));
+                }
+            }
+
             p.team = team;
         }
     }

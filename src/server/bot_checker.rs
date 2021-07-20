@@ -102,7 +102,6 @@ impl BotChecker {
     }
 
 
-
     pub fn check_bot_name(&self, player_name: &str) -> bool {
         for name in self.bots_name.iter() {
             if player_name.eq(name) {
@@ -135,6 +134,7 @@ impl BotChecker {
 
 }
 
+/// Create a vector storing all steamid3's found within a file
 fn read_steamid3_list(filename: &str) -> Vec<String> {
     let mut list: Vec<String> = Vec::new();
     let reg = Regex::new(r#"\[?(?P<uuid>U:\d:\d+)\]?"#).unwrap();
@@ -156,8 +156,6 @@ fn read_steamid3_list(filename: &str) -> Vec<String> {
     } else {
         println!("Could not get file cfg/{} to bot IDs", filename);
     }
-
-
 
     list
 }

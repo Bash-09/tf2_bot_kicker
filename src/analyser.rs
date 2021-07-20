@@ -25,7 +25,6 @@ impl Analyser {
 
         let mut reg: Vec<LogMatcher> = Vec::new();
 
-        // reg.push(LogMatcher::new(Regex::new(reg_status), status));
         reg.push(LogMatcher::new(
             Regex::new(r_status).unwrap(),
             f_status
