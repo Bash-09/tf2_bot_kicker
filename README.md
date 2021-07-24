@@ -1,12 +1,15 @@
 # tf2_bot_kicker
 A (mostly) cross-platform bot identifier/kicker written in Rust.
 
+# What it does
+When you run the program, it stores a collection names, steamids and rules from `bots.cfg` that identify bots. While you are playing a game of casual TF2 with this program running, it periodically checks the users connected to the server. If any of the players fit the bot-identifying information it has recorded it is able to send chat messages to warn other players of the bots joining or are currently on the server and automatically call vote-kicks against these bots. Several settings are provided to customise if you want it to automatically send chat messages, call vote kicks, how often this happens etc.
+
 # Usage
 No installation is required.
 Download the program [here](https://github.com/Googe14/tf2_bot_kicker/releases)
 
 tl;dr:
-1. Add `bind F7 "exec command"` to autoexec.cfg
+1. Add `bind F7 "exec command"` to your TF2 autoexec.cfg
 2. Add `-condebug -conclearlog` to your Steam TF2 launch options.
 3. Make sure the TF2 directory is correct in `cfg/settings.cfg`
 4. Launch TF2.
@@ -28,7 +31,8 @@ Inside the cfg folder is settings.cfg, you can change some basic settings here.\
 `chat_reminders` - true/false if you want regular messages in chat to alert other players of current connected bots.\
 `join_alerts` - true/false if you want chat messages that say when a bot is joining the server (This can occasionally miss bots if the period is set too high).\
 `kick` - true/false if you want to automatically call votekicks on bots. (There is no way to determine when a vote is running or if you are on cooldown, so it may attempt to call votekicks even when you cannot)\
-`period` - Integer Time in seconds between server refreshes (each alert/kick attempt)
+`period` - Integer Time in seconds between server refreshes (each alert/kick attempt)\
+Note: I encourage you to not set the period too low with chat_reminders on as that may be annoying for the other players, find a balance or turn reminders off. I personally play with join_alerts on but no chat_reminders at a period of 10 seconds.
 
 # Adding bots to the list
 In the cfg folder there is a file called bots.cfg, this has all the information to identify the bots under a few sections.\
