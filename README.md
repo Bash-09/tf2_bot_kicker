@@ -1,5 +1,5 @@
 # tf2_bot_kicker
-My Implementation of a bot identifier/kicker in Rust. This was designed to be cross-platform and I don't believe it uses any platform specific libraries, but this has only been tested on Windows so if it doesn't work on Linux then I'll figure that out in the future.
+A (mostly) cross-platform bot identifier/kicker written in Rust.
 
 # Usage
 No installation is required.
