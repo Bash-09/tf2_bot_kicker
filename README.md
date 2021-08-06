@@ -37,7 +37,7 @@ Note: I encourage you to not set the period too low with chat_reminders on as th
 # Adding bots to the list
 In the cfg folder there is a file called bots.cfg, this has all the information to identify the bots under a few sections.\
 `name:` has exact names to check for.\
-`regex:` has regexes to match player names against.\
+`regex:` has regexes to match player names against. (Be careful adding to these, it is easy to accidentally make a rule that will catch many regular players.)\
 `uuid:` identifies specific steam accounts that are know to belong to bots.\
 `list:` has files that contain uuids of bot accounts.\
 
