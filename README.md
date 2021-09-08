@@ -1,6 +1,8 @@
 # tf2_bot_kicker
 A (mostly) cross-platform bot identifier/kicker written in Rust.
 
+A version with a Graphical User Interface can be downloaded from the [tf2-bot-kicker-gui](https://github.com/Jenga500/tf2-bot-kicker-gui) repository, making everything much easier!
+
 # What it does
 When you run the program, it stores a collection names, steamids and rules from `bots.cfg` that identify bots. While you are playing a game of casual TF2 with this program running, it periodically checks the users connected to the server. If any of the players fit the bot-identifying information it has recorded it is able to send chat messages to warn other players of the bots joining or are currently on the server and automatically call vote-kicks against these bots. Several settings are provided to customise if you want it to automatically send chat messages, call vote kicks, how often this happens etc.
 
