@@ -1,7 +1,7 @@
 use std::io::Read;
 use std::fs::File;
 
-use regex::{Regex};
+use regex::Regex;
 
 use super::player::Player;
 

@@ -12,9 +12,9 @@ impl std::fmt::Display for Team {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let out: &str;
         match self {
-            Team::DEFENDERS => {out = "DEFEND"},
-            Team::INVADERS  => {out = "INVADE"},
-            Team::NONE      => {out = "NONE  "},
+            Team::DEFENDERS => {out = "DEF "},
+            Team::INVADERS  => {out = "INV "},
+            Team::NONE      => {out = "NONE"},
         }
         write!(f, "{}", out)
     }
@@ -47,6 +47,7 @@ pub struct Player {
     pub state: State,
     pub bot: bool,
     pub accounted: bool,
+    pub new_connection: bool,
 }
 
 impl std::fmt::Display for Player {

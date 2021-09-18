@@ -40,7 +40,6 @@ fn main() {
             }
     
             analyser.update(&line);
-            LogWatcherAction::None
         });
     } else {
         println!("No console.log file found. Please be sure to add -condebug to your launch options and then run the game before trying again.");

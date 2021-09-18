@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::collections::HashMap;
 
 pub mod player;
@@ -23,6 +25,7 @@ pub struct Server {
     pub settings: Settings,
     pub com: Commander,
     pub bot_checker: BotChecker,
+    pub new_players: Vec<String>,
 }
 
 impl Server {
@@ -37,11 +40,13 @@ impl Server {
             settings,
             com,
             bot_checker: BotChecker::new(),
+            new_players: Vec::new(),
         }
     }
 
     pub fn clear(&mut self) {
         self.players.clear();
+        self.new_players.clear();
     }
 
     pub fn set_active(&mut self) {
@@ -100,9 +105,6 @@ impl Server {
         for p in bots {
             match &self.settings.user {
                 None => {
-                    println!("Calling votekick.");
-                    self.com.run_command("echo calling votekick");
-                    println!("{}", p);
                     self.com.kick(p);
                 }
                 Some(id) => {

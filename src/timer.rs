@@ -1,4 +1,6 @@
-use std::time::{Instant};
+#![allow(dead_code)]
+
+use std::time::Instant;
 
 
 pub struct Timer {
