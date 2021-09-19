@@ -48,12 +48,17 @@ pub fn f_status(serv: &mut Server, str: &str, caps: Captures) {
         state = State::Active;
     }
 
+    // Get connected time of player
+    let time = get_time(caps[4].to_string());
+
+    // Update an existing player
     if let Some(p) = serv.players.get_mut(&steamid) {
-        // Update an existing player
+        p.time = time;
         p.state = state;
         p.accounted = true;
+
+    // Create a new player entry
     } else {
-        // Create a new player entry
 
         let name = caps[2].to_string();
         
@@ -80,10 +85,16 @@ pub fn f_status(serv: &mut Server, str: &str, caps: Captures) {
                 .open("cfg/recorded_bots.txt")
                 .expect("Failed to open/create cfg/recorded_bots.txt");
 
-            if let Err(e) = write!(file, "[{}] - {}\n", &steamid, &name) {
+            if let Err(e) = write!(file, "\n[{}] - {}", &steamid, &name) {
                 eprintln!("Couldn't write to cfg/recorded_bots.txt: {}", e);
             }
+            serv.bot_checker.append_uuid(steamid.clone());
 
+        }
+
+        let mut new_connection: bool = false;
+        if time < 20 {
+            new_connection = true;
         }
 
         // Construct new player for the list
@@ -91,18 +102,33 @@ pub fn f_status(serv: &mut Server, str: &str, caps: Captures) {
             userid: caps[1].to_string(),
             name,
             steamid,
-            time: 0, // Not implemented
+            time,
             team: Team::NONE,
             state,
             bot,
             accounted: true,
-            new_connection: true,
-
+            new_connection,
         };
 
         serv.players.insert(p.steamid.clone(), p);
     }
 
+}
+
+// Converts a given string time (e.g. 57:48 or 1:14:46) as an integer number of seconds
+fn get_time(input: String) -> u32 {
+
+    let mut t: u32 = 0;
+
+    let splits: Vec<&str> = input.split(':').collect();
+    let n = splits.len();
+
+    for (i, v) in splits.iter().enumerate() {
+        let dt: u32 = v.parse::<u32>().expect(&format!("Had trouble parsing {} as u32", v));
+        t += 60u32.pow((n-i-1) as u32) * dt;
+    }
+
+    t
 }
 
 // Reads lines from output of the "tf_lobby_debug" command
@@ -133,27 +159,24 @@ pub fn f_lobby(serv: &mut Server, str: &str, caps: Captures) {
         {
 
             p.team = team;
-            let mut just_joined: bool = false;
 
-            // Check if player has just joined
-            serv.new_players.retain(|new_player| {
-                if !new_player.eq(&p.name) {
-                    return true;
-                }
+            // Check if player has just spawned in
+            // serv.new_players.retain(|new_player| {
+            //     if !new_player.eq(&p.name) {
+            //         return true;
+            //     }
 
-                if p.team == Team::NONE {
-                    return true;
-                }
+            //     if p.team == Team::NONE {
+            //         return true;
+            //     }
 
-                just_joined = true;
-
-                // Remove from list of newly joined players
-                false
-            });
+            //     // Remove from list of newly joined players
+            //     false
+            // });
 
 
             // Alert server of bot joining the server
-            if just_joined && p.bot && serv.settings.join_alert {
+            if p.new_connection && p.bot && serv.settings.join_alert {
                 if let Some(ut) = user_team {
                     if ut == team {
                         serv.com.say(&format!("Bot alert! {} is joining our team.", p.name));
@@ -163,6 +186,7 @@ pub fn f_lobby(serv: &mut Server, str: &str, caps: Captures) {
                 } else {
                     serv.com.say(&format!("Bot alert! {} is joining the game.", p.name));
                 }
+                p.new_connection = false;
             }
 
         }
@@ -173,7 +197,7 @@ pub fn f_lobby(serv: &mut Server, str: &str, caps: Captures) {
 
 pub const r_player_connect: &str = r#"^(.*) connected\s*$"#;
 pub fn f_player_connect(serv: &mut Server, str: &str, caps: Captures) {
-    serv.new_players.push(String::from(&caps[1])); // Push name to list of new players
+    // serv.new_players.push(String::from(&caps[1])); // Push name to list of new players
 
     if serv.bot_checker.check_bot_name(&caps[1]) {
         println!("Bot has joined: {}", &caps[1]);

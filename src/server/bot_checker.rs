@@ -132,6 +132,10 @@ impl BotChecker {
         self.check_bot_name(&p.name)
     }
 
+    pub fn append_uuid(&mut self, uuid: String) {
+        self.bots_uuid.push(uuid);
+    }
+
 }
 
 /// Create a vector storing all steamid3's found within a file
