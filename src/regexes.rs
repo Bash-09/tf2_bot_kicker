@@ -145,13 +145,13 @@ pub fn f_lobby(serv: &mut Server, str: &str, caps: Captures) {
         _ => {},
     }
 
-    let mut user_team: Option<Team> = None;
-    if let Some(userid) = &serv.settings.user {
-        match serv.players.get(userid) {
-            None => {},
-            Some(p) => {user_team = Some(p.team);}
-        }
-    }
+    // let mut user_team: Option<Team> = None;
+    // if let Some(userid) = &serv.settings.user {
+    //     match serv.players.get(userid) {
+    //         None => {},
+    //         Some(p) => {user_team = Some(p.team);}
+    //     }
+    // }
 
     match serv.players.get_mut(&caps[2].to_string()) {
         None => {},
@@ -177,15 +177,19 @@ pub fn f_lobby(serv: &mut Server, str: &str, caps: Captures) {
 
             // Alert server of bot joining the server
             if p.new_connection && p.bot && serv.settings.join_alert {
-                if let Some(ut) = user_team {
-                    if ut == team {
-                        serv.com.say(&format!("Bot alert! {} is joining our team.", p.name));
-                    } else {
-                        serv.com.say(&format!("Bot alert! {} is joining the enemy team.", p.name));
-                    }
-                } else {
-                    serv.com.say(&format!("Bot alert! {} is joining the game.", p.name));
-                }
+
+                serv.new_bots.push((p.name.clone(), p.team));
+
+                // if let Some(ut) = user_team {
+                //     if ut == team {
+                //         serv.com.say(&format!("Bot alert! {} is joining our team.", p.name));
+                //     } else {
+                //         serv.com.say(&format!("Bot alert! {} is joining the enemy team.", p.name));
+                //     }
+                // } else {
+                //     serv.com.say(&format!("Bot alert! {} is joining the game.", p.name));
+                // }
+
                 p.new_connection = false;
             }
 

@@ -25,7 +25,7 @@ pub struct Server {
     pub settings: Settings,
     pub com: Commander,
     pub bot_checker: BotChecker,
-    pub new_players: Vec<String>,
+    pub new_bots: Vec<(String, Team)>,
 }
 
 impl Server {
@@ -40,13 +40,13 @@ impl Server {
             settings,
             com,
             bot_checker: BotChecker::new(),
-            new_players: Vec::new(),
+            new_bots: Vec::new(),
         }
     }
 
     pub fn clear(&mut self) {
         self.players.clear();
-        self.new_players.clear();
+        self.new_bots.clear();
     }
 
     pub fn set_active(&mut self) {
@@ -118,58 +118,113 @@ impl Server {
 
     /// Print bots to console and send chat message in-game if necessary of current bots
     pub fn announce_bots(&mut self) {
-        let mut bots: Vec<&Player> = Vec::new();
+        
+        let mut bots: Vec<String> = Vec::new();
+        let mut new: bool = false;
+
+        // Collect all bots in list bots
+        let mut existing_bots: Vec<&Player> = Vec::new();
+        println!("Bots on server: ");
         for p in self.players.values().into_iter() {
             if p.bot {
-                bots.push(p);
+                println!("{}", p);
+                existing_bots.push(p);
             }
         }
-        bots = bots.into_iter().filter(|p| {
+
+        // Remove not-yet-active or unaccounted bots
+        existing_bots = existing_bots.into_iter().filter(|p| {
             p.state == State::Active && p.accounted
         }).collect();
 
+        //Check for teams
+        let mut invaders = false;
+        let mut defenders = false;
+
+        // Create list of existing bot names/teams on server
+        for p in existing_bots.iter() {
+            if p.team == Team::DEFENDERS {defenders = true;}
+            if p.team == Team::INVADERS {invaders = true;}
+
+            bots.push(p.name.clone());
+        }
+
+
+        // Set to announce joining bots if there are any
+        if !self.new_bots.is_empty() && self.settings.join_alert {
+
+            bots.clear();
+
+            invaders = false;
+            defenders = false;
+
+            for p in self.new_bots.iter() {
+                if p.1 == Team::DEFENDERS {defenders = true;}
+                if p.1 == Team::INVADERS {invaders = true;}
+
+                bots.push(p.0.clone());
+            }
+            self.new_bots.clear();
+            new = true;
+        }
+
+
+        // Announce existing bots
         if bots.is_empty() {
             return;
         }
 
-        let mut invaders = false;
-        let mut defenders = false;
+        // Don't bother if there's nothing to announce
+        if !(self.settings.chat_reminders || new) {return;}
 
-        for p in bots.iter() {
-            if p.team == Team::DEFENDERS {
-                defenders = true;
-            } else if p.team == Team::INVADERS {
-                invaders = true;
-            }
-        }
-
+        // Construct alert message
         let mut alert: String = String::from("Bot alert! ");
 
-        if invaders && defenders {
-            alert.push_str("Both teams have BOTS: ");
-        } else if let Some(userid) = &self.settings.user {
-            if let Some(p) = self.players.get(userid) {
-                if (p.team == Team::INVADERS && invaders) || (p.team == Team::DEFENDERS && defenders) {
-                    alert.push_str("Our team has BOTS: ");
+        // Prefix message with which teams the bots are on/joining
+        if !new {
+            // Set which team they're joining
+            if invaders && defenders {
+                alert.push_str("BOTS joining both teams: ");
+            } else if let Some(userid) = &self.settings.user {
+                if let Some(p) = self.players.get(userid) {
+                    if (p.team == Team::INVADERS && invaders) || (p.team == Team::DEFENDERS && defenders) {
+                        alert.push_str("BOTS joining our team: ");
+                    } else {
+                        alert.push_str("BOTS joining enemy: ");
+                    }
                 } else {
-                    alert.push_str("Enemy team has BOTS: ");
+                    alert.push_str("BOTS joining: ");
+                }
+            } else {
+                alert.push_str("BOTS joining: ");
+            }
+        } else {
+            // Set which team they're on
+            if invaders && defenders {
+                alert.push_str("Both teams have BOTS: ");
+            } else if let Some(userid) = &self.settings.user {
+                if let Some(p) = self.players.get(userid) {
+                    if (p.team == Team::INVADERS && invaders) || (p.team == Team::DEFENDERS && defenders) {
+                        alert.push_str("Our team has BOTS: ");
+                    } else {
+                        alert.push_str("Enemy team has BOTS: ");
+                    }
+                } else {
+                    alert.push_str("The server has BOTS: ");
                 }
             } else {
                 alert.push_str("The server has BOTS: ");
             }
-        } else {
-            alert.push_str("The server has BOTS: ");
         }
 
-        println!("Bots on server: ");
+        // List bots
         for p in bots {
-            alert.push_str(&format!("{} ", p.name));
-            println!("{}", p);
+            alert.push_str(&format!("{} ", p));
         }
 
-        if self.settings.chat_reminders {
-            self.com.say(&alert);
-        }
+        // Broadcast message
+        self.com.say(&alert);
+
     }
 
 
