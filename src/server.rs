@@ -124,10 +124,8 @@ impl Server {
 
         // Collect all bots in list bots
         let mut existing_bots: Vec<&Player> = Vec::new();
-        println!("Bots on server: ");
         for p in self.players.values().into_iter() {
             if p.bot {
-                println!("{}", p);
                 existing_bots.push(p);
             }
         }
@@ -141,12 +139,17 @@ impl Server {
         let mut invaders = false;
         let mut defenders = false;
 
-        // Create list of existing bot names/teams on server
+
+        if !existing_bots.is_empty() {        
+            println!("Bots on server: ");    
+        }
+        // Create list of existing bot names/teams on server and list bots
         for p in existing_bots.iter() {
             if p.team == Team::DEFENDERS {defenders = true;}
             if p.team == Team::INVADERS {invaders = true;}
 
             bots.push(p.name.clone());
+            println!("{}", p);
         }
 
 
@@ -181,22 +184,22 @@ impl Server {
         let mut alert: String = String::from("Bot alert! ");
 
         // Prefix message with which teams the bots are on/joining
-        if !new {
+        if new {
             // Set which team they're joining
             if invaders && defenders {
-                alert.push_str("BOTS joining both teams: ");
+                alert.push_str("Bots joining both teams: ");
             } else if let Some(userid) = &self.settings.user {
                 if let Some(p) = self.players.get(userid) {
                     if (p.team == Team::INVADERS && invaders) || (p.team == Team::DEFENDERS && defenders) {
-                        alert.push_str("BOTS joining our team: ");
+                        alert.push_str("Bots joining our team: ");
                     } else {
-                        alert.push_str("BOTS joining enemy: ");
+                        alert.push_str("Bots joining enemy team: ");
                     }
                 } else {
-                    alert.push_str("BOTS joining: ");
+                    alert.push_str("Bots joining: ");
                 }
             } else {
-                alert.push_str("BOTS joining: ");
+                alert.push_str("Bots joining: ");
             }
         } else {
             // Set which team they're on
