@@ -19,7 +19,7 @@ If the program fails to run, most likely it could not find your TF2 directory, e
 
 ## Linux devices may have ensure they have installed additional libraries installed
 
-### Ubunt packages:
+### Ubuntu packages:
 
 `libx11-dev`\
 `libxtst-dev`\
