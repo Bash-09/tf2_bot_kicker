@@ -17,7 +17,7 @@ Download the [command line program](https://github.com/Googe14/tf2_bot_kicker/re
 
 If the program fails to run, most likely it could not find your TF2 directory, ensure it is set correctly in cfg/settings.cfg. If this is troublesome, the program can also be run from directly inside the Team Fortress 2 folder without configuring the directory setting.
 
-## Linux devices may have ensure they have installed additional libraries installed
+## Linux devices may have to install additional libraries:
 
 ### Ubuntu packages:
 
