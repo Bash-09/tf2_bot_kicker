@@ -1,7 +1,6 @@
 #![allow(non_upper_case_globals)]
 #![allow(unused_variables)]
 
-
 use std::{fs::OpenOptions, io::Write};
 
 use crate::server::*;
@@ -17,10 +16,7 @@ pub struct LogMatcher {
 
 impl LogMatcher {
     pub fn new(r: Regex, f: fn(serv: &mut Server, str: &str, caps: Captures)) -> LogMatcher {
-        LogMatcher {
-            r,
-            f,
-        }
+        LogMatcher { r, f }
     }
 }
 
@@ -38,9 +34,9 @@ impl LogMatcher {
 // Reads lines from output of the "status" command
 // Includes players on server, player name, state, steamid, time connected
 // If no player exists on the server with a steamid from here, it creates a new player and adds it to the list
-pub const r_status: &str = r#"^#\s*(\d+)\s"(.*)"\s+\[(U:\d:\d+)\]\s+(\d*:?\d\d:\d\d)\s+\d+\s*\d+\s*(\w+).*$"#;
+pub const r_status: &str =
+    r#"^#\s*(\d+)\s"(.*)"\s+\[(U:\d:\d+)\]\s+(\d*:?\d\d:\d\d)\s+\d+\s*\d+\s*(\w+).*$"#;
 pub fn f_status(serv: &mut Server, str: &str, caps: Captures) {
-
     let steamid = caps[3].to_string();
 
     let mut state = State::Spawning;
@@ -59,25 +55,24 @@ pub fn f_status(serv: &mut Server, str: &str, caps: Captures) {
 
     // Create a new player entry
     } else {
-
         let name = caps[2].to_string();
-        
+
         // Check if they are a bot according to the lists
         let mut bot = false;
         if serv.bot_checker.check_bot_steamid(&steamid) {
             bot = true;
-    
+
             if !serv.players.contains_key(&steamid) {
                 println!("Known Bot joining:   {}", name);
             }
         } else if serv.bot_checker.check_bot_name(&name) {
             bot = true;
-    
+
             if !serv.players.contains_key(&steamid) {
                 println!("Unknown bot joining: {} - [{}]", name, steamid);
             }
 
-            // Add suspected bot steamid and name to file 
+            // Add suspected bot steamid and name to file
             let mut file = OpenOptions::new()
                 .write(true)
                 .append(true)
@@ -89,7 +84,6 @@ pub fn f_status(serv: &mut Server, str: &str, caps: Captures) {
                 eprintln!("Couldn't write to cfg/recorded_bots.txt: {}", e);
             }
             serv.bot_checker.append_uuid(steamid.clone());
-
         }
 
         let mut new_connection: bool = false;
@@ -103,7 +97,7 @@ pub fn f_status(serv: &mut Server, str: &str, caps: Captures) {
             name,
             steamid,
             time,
-            team: Team::NONE,
+            team: Team::None,
             state,
             bot,
             accounted: true,
@@ -112,20 +106,21 @@ pub fn f_status(serv: &mut Server, str: &str, caps: Captures) {
 
         serv.players.insert(p.steamid.clone(), p);
     }
-
 }
 
 // Converts a given string time (e.g. 57:48 or 1:14:46) as an integer number of seconds
 fn get_time(input: String) -> u32 {
-
     let mut t: u32 = 0;
 
     let splits: Vec<&str> = input.split(':').collect();
     let n = splits.len();
 
     for (i, v) in splits.iter().enumerate() {
-        let dt: u32 = v.parse::<u32>().expect(&format!("Had trouble parsing {} as u32", v));
-        t += 60u32.pow((n-i-1) as u32) * dt;
+        // let dt: u32 = v.parse::<u32>().expect(&format!("Had trouble parsing {} as u32", v));
+        let dt: u32 = v
+            .parse::<u32>()
+            .unwrap_or_else(|_| panic!("Had trouble parsing {} as u32", v));
+        t += 60u32.pow((n - i - 1) as u32) * dt;
     }
 
     t
@@ -135,69 +130,30 @@ fn get_time(input: String) -> u32 {
 // Includes the team of players on the server
 // NOTE: Teams are stored as INVADERS/DEFENDERS and does not swap when Red/Blu swaps so it cannot
 // be used to reliably check which team the user is on, it can only check relative to the user (same/opposite team)
-pub const r_lobby: &str = r#"^  Member\[(\d+)] \[(U:\d:\d+)]  team = TF_GC_TEAM_(\w+)  type = MATCH_PLAYER\s*$"#;
+pub const r_lobby: &str =
+    r#"^  Member\[(\d+)] \[(U:\d:\d+)]  team = TF_GC_TEAM_(\w+)  type = MATCH_PLAYER\s*$"#;
 pub fn f_lobby(serv: &mut Server, str: &str, caps: Captures) {
-    let mut team = Team::NONE;
+    let mut team = Team::None;
 
     match &caps[3] {
-        "INVADERS" => {team = Team::INVADERS},
-        "DEFENDERS" => {team = Team::DEFENDERS},
-        _ => {},
+        "INVADERS" => team = Team::Invaders,
+        "DEFENDERS" => team = Team::Defenders,
+        _ => {}
     }
 
-    // let mut user_team: Option<Team> = None;
-    // if let Some(userid) = &serv.settings.user {
-    //     match serv.players.get(userid) {
-    //         None => {},
-    //         Some(p) => {user_team = Some(p.team);}
-    //     }
-    // }
-
     match serv.players.get_mut(&caps[2].to_string()) {
-        None => {},
-        Some(p) => 
-        {
-
+        None => {}
+        Some(p) => {
             p.team = team;
-
-            // Check if player has just spawned in
-            // serv.new_players.retain(|new_player| {
-            //     if !new_player.eq(&p.name) {
-            //         return true;
-            //     }
-
-            //     if p.team == Team::NONE {
-            //         return true;
-            //     }
-
-            //     // Remove from list of newly joined players
-            //     false
-            // });
-
 
             // Alert server of bot joining the server
             if p.new_connection && p.bot && serv.settings.join_alert {
-
                 serv.new_bots.push((p.name.clone(), p.team));
-
-                // if let Some(ut) = user_team {
-                //     if ut == team {
-                //         serv.com.say(&format!("Bot alert! {} is joining our team.", p.name));
-                //     } else {
-                //         serv.com.say(&format!("Bot alert! {} is joining the enemy team.", p.name));
-                //     }
-                // } else {
-                //     serv.com.say(&format!("Bot alert! {} is joining the game.", p.name));
-                // }
-
                 p.new_connection = false;
             }
-
         }
     }
-
 }
-
 
 pub const r_player_connect: &str = r#"^(.*) connected\s*$"#;
 pub fn f_player_connect(serv: &mut Server, str: &str, caps: Captures) {
@@ -222,7 +178,6 @@ pub fn f_user_disconnect(serv: &mut Server, str: &str, caps: Captures) {
     serv.clear();
 }
 
-
 pub const r_list_players: &str = r#"^players\s*$"#;
 pub fn f_list_players(serv: &mut Server, str: &str, caps: Captures) {
     serv.list_players();
@@ -244,7 +199,8 @@ pub fn f_resume(serv: &mut Server, str: &str, caps: Captures) {
 pub const r_help: &str = r#"^help\s*$"#;
 pub fn f_help(serv: &mut Server, str: &str, caps: Captures) {
     println!("Commands: \n pause\nresume\nhelp\nplayers\nupdate");
-    serv.com.run_command("echo \"Commands: pause, resume, help, players, update\"")
+    serv.com
+        .run_command("echo \"Commands: pause, resume, help, players, update\"")
 }
 
 // Indicates all commands have been run server info updated and is ready to be cleared of old players

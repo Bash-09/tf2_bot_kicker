@@ -1,5 +1,5 @@
-use std::{fs::File, io::Read};
 use regex::Regex;
+use std::{fs::File, io::Read};
 
 pub struct Settings {
     pub user: Option<String>,
@@ -11,7 +11,6 @@ pub struct Settings {
 }
 
 impl Settings {
-    
     pub fn new() -> Settings {
         let mut user: Option<String> = None;
         let mut chat_alerts: bool = true;
@@ -22,53 +21,55 @@ impl Settings {
 
         let filename = "cfg/settings.cfg";
 
-        let mut file = File::open(filename).expect(&format!("No settings file found in {}!", filename));
+        let mut file = File::open(filename)
+            .unwrap_or_else(|_| panic!("No settings file found in {}!", filename));
         let mut contents: String = String::new();
-        file.read_to_string(&mut contents).expect(&format!("Failed to read file {} for settings.", filename));
+        file.read_to_string(&mut contents)
+            .unwrap_or_else(|_| panic!("Failed to read file {} for settings.", filename));
 
         let regx = Regex::new(r#"^\s*(?P<setting>[\w\d]+)\s*=\s*(?P<value>.*)\s*$"#).unwrap();
 
         for line in contents.lines() {
             if let Some(caps) = regx.captures(line) {
                 match &caps["setting"] {
-                    "user"          => {
+                    "user" => {
                         user = get_uuid(&caps["value"]);
                         if user == None {
                             println!("No Userid set, this can be set in cfg/settings.cfg with user = [U:1:1234567]");
                         } else {
                             println!("Setting user id to {}", get_uuid(&caps["value"]).unwrap());
                         }
-                    },
-                    "join_alert"   => {
+                    }
+                    "join_alert" => {
                         if let Some(b) = to_bool(&caps["value"]) {
                             chat_alerts = b;
                             println!("Setting join alerts to {}", chat_alerts);
                         } else {
                             println!("Error reading value for setting chat_alerts");
                         }
-                    },
-                    "chat_reminders"   => {
+                    }
+                    "chat_reminders" => {
                         if let Some(b) = to_bool(&caps["value"]) {
                             chat_reminders = b;
                             println!("Setting chat reminders to {}", chat_reminders);
                         } else {
                             println!("Error reading value for setting chat_reminders");
                         }
-                    },
-                    "kick"          => {
+                    }
+                    "kick" => {
                         if let Some(b) = to_bool(&caps["value"]) {
                             kick = b;
                             println!("Setting kick to {}", kick);
                         } else {
                             println!("Error reading value for setting kick");
                         }
-                    },
-                    "period"        => {
+                    }
+                    "period" => {
                         if let Ok(p) = &caps["value"].parse::<u32>() {
                             period = *p;
                             println!("Setting period to {} seconds", period);
                         }
-                    },
+                    }
                     "tf2_directory" => {
                         directory = caps["value"].to_string();
                     }
@@ -76,7 +77,6 @@ impl Settings {
                 }
             }
         }
-
 
         Settings {
             user,
@@ -87,8 +87,6 @@ impl Settings {
             directory,
         }
     }
-
-
 }
 
 fn get_uuid(s: &str) -> Option<String> {
@@ -102,8 +100,8 @@ fn get_uuid(s: &str) -> Option<String> {
 
 fn to_bool(s: &str) -> Option<bool> {
     match s {
-        "true"  => Some(true),
+        "true" => Some(true),
         "false" => Some(false),
-        _       => None,
+        _ => None,
     }
 }

@@ -2,7 +2,6 @@
 
 use std::time::Instant;
 
-
 pub struct Timer {
     last: Instant,
     interval_duration: f32,
@@ -12,7 +11,6 @@ pub struct Timer {
 }
 
 impl Timer {
-
     pub fn new() -> Timer {
         Timer {
             last: Instant::now(),
@@ -21,7 +19,6 @@ impl Timer {
             intervals: 0,
             done: false,
         }
-
     }
 
     pub fn go(&mut self) -> bool {
@@ -39,7 +36,7 @@ impl Timer {
             return true;
         }
 
-        return false;
+        false
     }
 
     pub fn reset(&mut self) {
@@ -54,5 +51,4 @@ impl Timer {
     pub fn intervals(&self) -> u32 {
         self.intervals
     }
-
 }

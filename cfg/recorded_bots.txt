@@ -239,7 +239,7 @@
 [U:1:1241842953] - DoesHotter
 [U:1:1186792867] - DoesHotter
 [U:1:1241781061] - DoesHotter
-[U:1:1246056781] - (1)VAC = Valve Allows Cheats
+[U:1:1246056781] - VAC = Valve Allows Cheats
 [U:1:1245638597] - VAC = Valve Allows Cheats
 [U:1:1246022523] - VAC = Valve Allows Cheats
 [U:1:1246167844] - VAC = Valve Allows Cheats
@@ -269,3 +269,9 @@
 [U:1:1243251676] - youtu.be/r-FEuTik4q4
 [U:1:1242977253] - youtu.be/r-FEuTik4q4
 [U:1:362658622]  - youtu.be/r-FEuTik4q4
+[U:1:1181404797] - (1)DoesHotter
+[U:1:1241526185] - DoesHotter
+
+[U:1:1199758244] - Impersonator
+[U:1:1199960069] - Impersonator
+[U:1:1199758244] - Impersonator

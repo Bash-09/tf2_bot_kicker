@@ -24,7 +24,6 @@ impl LogWatcher {
             Err(err) => return Err(err),
         };
 
-
         let mut reader = BufReader::new(f);
         let pos = metadata.len();
         reader.seek(SeekFrom::Start(pos)).unwrap();
@@ -39,7 +38,6 @@ impl LogWatcher {
     where
         F: FnMut(String),
     {
-
         loop {
             let mut line = String::new();
             let resp = self.reader.read_line(&mut line);
@@ -54,12 +52,10 @@ impl LogWatcher {
                     } else {
                         if self.finish {
                             break;
-                        } else {
-                            //TODO Reset to end of file if it shortens
-
-                            callback(String::new());
-                            self.reader.seek(SeekFrom::Start(self.pos)).unwrap();
                         }
+                        //TODO Reset to end of file if it shortens
+                        callback(String::new());
+                        self.reader.seek(SeekFrom::Start(self.pos)).unwrap();
                     }
                 }
                 Err(err) => {

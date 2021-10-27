@@ -1,4 +1,3 @@
-
 /*
 
     Add "-condebug" to TF2 launch options to write console to log file
@@ -16,7 +15,7 @@ use logwatcher::*;
 mod commander;
 
 mod analyser;
-use analyser::{Analyser};
+use analyser::Analyser;
 
 mod regexes;
 mod server;
@@ -24,7 +23,6 @@ mod server;
 mod timer;
 
 fn main() {
-
     let print_console = false;
 
     let mut analyser = Analyser::new();
@@ -38,11 +36,10 @@ fn main() {
             if print_console {
                 println!("Console: {}", line);
             }
-    
+
             analyser.update(&line);
         });
     } else {
         println!("No console.log file found. Please be sure to add -condebug to your launch options and then run the game before trying again.");
     }
-
 }
