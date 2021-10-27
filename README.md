@@ -17,6 +17,14 @@ Download the [command line program](https://github.com/Googe14/tf2_bot_kicker/re
 
 If the program fails to run, most likely it could not find your TF2 directory, ensure it is set correctly in cfg/settings.cfg. If this is troublesome, the program can also be run from directly inside the Team Fortress 2 folder without configuring the directory setting.
 
+## Linux devices may have ensure they have installed additional libraries installed
+
+### Ubunt packages:
+
+`libx11-dev`\
+`libxtst-dev`\
+`libudev-dev`\
+`libinput-dev`\
 
 # Settings and Configuration
 
@@ -30,9 +38,8 @@ Inside the cfg folder is settings.cfg, you can change some basic settings here.\
 Note: I encourage you to not leave chat_reminders on if the period is reasonably low (maybe 30 seconds?) as that may be annoying for the other players, find a balance or turn reminders off. I personally play with join_alerts on but no chat_reminders at a period of 10 seconds.
 
 
-# Compiling
-
-I believe this should build without issue using Cargo on Windows, on Linux you may have to install libxdo. 
+# Building
+This program should build without issue through Cargo on Windows, on Linux it should build provided the libraries listed above are installed.
 
 
 # Additional Information
