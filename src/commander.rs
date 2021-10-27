@@ -1,16 +1,19 @@
 use std::fs::{read_dir, File, OpenOptions};
 use std::io::prelude::*;
 
-extern crate enigo;
-use enigo::{Enigo, Key, KeyboardControllable};
+// extern crate enigo;
+// use enigo::{Enigo, Key, KeyboardControllable};
+
+extern crate inputbot;
+use inputbot::KeybdKey;
 
 use crate::server::player::Player;
 
 pub struct Commander {
     file: File,
     file_name: String,
-    key: Key,
-    keyboard: Enigo,
+    // key: Key,
+    // keyboard: Enigo,
 }
 
 impl Commander {
@@ -30,8 +33,8 @@ impl Commander {
         Commander {
             file: create_command_file(&file_name),
             file_name,
-            key: Key::F7,
-            keyboard: Enigo::new(),
+            // key: Key::F7,
+            // keyboard: Enigo::new(),
         }
     }
 
@@ -60,7 +63,11 @@ impl Commander {
 
     /// Runs all queued commands
     pub fn run(&mut self) {
-        self.keyboard.key_click(self.key);
+        // self.keyboard.key_click(self.key);
+        KeybdKey::F7Key.press();
+        KeybdKey::F7Key.release();
+
+        // todo!("Reimplement keyboard input");
     }
 
     /// Clears queue and runs a command
