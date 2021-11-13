@@ -33,8 +33,6 @@ impl Commander {
         Commander {
             file: create_command_file(&file_name),
             file_name,
-            // key: Key::F7,
-            // keyboard: Enigo::new(),
         }
     }
 
@@ -63,11 +61,8 @@ impl Commander {
 
     /// Runs all queued commands
     pub fn run(&mut self) {
-        // self.keyboard.key_click(self.key);
         KeybdKey::F7Key.press();
         KeybdKey::F7Key.release();
-
-        // todo!("Reimplement keyboard input");
     }
 
     /// Clears queue and runs a command

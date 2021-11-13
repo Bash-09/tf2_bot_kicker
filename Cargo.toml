@@ -7,7 +7,8 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-#enigo = "0.0.14"
-inputbot = "0.5.1"
+# inputbot = "0.5.1"
+inputbot = { git = "https://github.com/Googe14/InputBot" }
+# inputbot = { path = "../input_bot_fork" }
 regex = "1"
 home = "0.5.3"
