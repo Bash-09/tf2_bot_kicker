@@ -1,9 +1,6 @@
 use std::fs::{read_dir, File, OpenOptions};
 use std::io::prelude::*;
 
-// extern crate enigo;
-// use enigo::{Enigo, Key, KeyboardControllable};
-
 extern crate inputbot;
 use inputbot::KeybdKey;
 
@@ -12,12 +9,13 @@ use crate::server::player::Player;
 pub struct Commander {
     file: File,
     file_name: String,
-    // key: Key,
-    // keyboard: Enigo,
 }
 
 impl Commander {
     pub fn new(directory: &str) -> Commander {
+
+        inputbot::init_device();
+
         let dir: String = directory.to_string();
 
         if !check_directory(directory) {
