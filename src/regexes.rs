@@ -200,7 +200,7 @@ pub const r_help: &str = r#"^help\s*$"#;
 pub fn f_help(serv: &mut Server, str: &str, caps: Captures) {
     println!("Commands: \n pause\nresume\nhelp\nplayers\nupdate");
     serv.com
-        .run_command("echo \"Commands: pause, resume, help, players, update\"")
+        .run_command("echo \"Commands: pause, resume, help, players, update\"", &serv.settings.key)
 }
 
 // Indicates all commands have been run server info updated and is ready to be cleared of old players

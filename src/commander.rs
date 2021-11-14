@@ -5,6 +5,7 @@ extern crate inputbot;
 use inputbot::KeybdKey;
 
 use crate::server::player::Player;
+use crate::server::settings::Settings;
 
 pub struct Commander {
     file: File,
@@ -58,24 +59,24 @@ impl Commander {
     }
 
     /// Runs all queued commands
-    pub fn run(&mut self) {
-        KeybdKey::F7Key.press();
-        KeybdKey::F7Key.release();
+    pub fn run(&self, key: &KeybdKey) {
+        key.press();
+        key.release();
     }
 
     /// Clears queue and runs a command
-    pub fn run_command(&mut self, command: &str) {
+    pub fn run_command(&mut self, command: &str, key: &KeybdKey) {
         self.clear();
         self.push(command);
-        self.run();
+        self.run(key);
     }
 
-    pub fn say(&mut self, s: &str) {
-        self.run_command(&format!("say \"{}\"", s));
+    pub fn say(&mut self, s: &str, settings: &Settings) {
+        self.run_command(&format!("say \"{}\"", s), &settings.key);
     }
 
-    pub fn kick(&mut self, p: &Player) {
-        self.run_command(&format!("callvote kick {}", p.userid));
+    pub fn kick(&mut self, p: &Player, settings: &Settings) {
+        self.run_command(&format!("callvote kick {}", p.userid), &settings.key);
     }
 }
 
