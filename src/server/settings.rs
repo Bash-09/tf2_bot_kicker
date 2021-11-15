@@ -78,6 +78,7 @@ impl Settings {
                     }
                     "key" => {
                         key = get_key(&caps["value"]);
+                        println!("Settings key to {:?}", key);
                     }
                     _ => {}
                 }
