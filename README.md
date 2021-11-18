@@ -16,8 +16,6 @@ Download the [command line program](https://github.com/Googe14/tf2_bot_kicker/re
 
 If the program fails to run, most likely it could not find your TF2 directory, ensure it is set correctly in cfg/settings.cfg. If this is troublesome, the program can also be run from directly inside the Team Fortress 2 folder without configuring the directory setting.
 
-# Running the Program
-
 ## Windows
 
 Provided you have set the appropriate keybind in your TF2 `autoexec.cfg`, and have the directory correct in `settings.cfg`, the program should run without issue.
