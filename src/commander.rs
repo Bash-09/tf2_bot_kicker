@@ -15,6 +15,7 @@ pub struct Commander {
 impl Commander {
     pub fn new(directory: &str) -> Commander {
 
+        #[cfg(not(windows))]
         inputbot::init_device();
 
         let dir: String = directory.to_string();
