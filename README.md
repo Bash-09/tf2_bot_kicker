@@ -49,9 +49,11 @@ Inside the cfg folder is settings.cfg, you can change some basic settings here.\
 `join_alerts` - true/false if you want chat messages that say when a bot is joining the server.\
 `kick` - true/false if you want to automatically call votekicks on bots.\
 `period` - Integer Time in seconds between actions (each alert/kick attempt)\
-Note: I encourage you to not leave chat_reminders on if the period is reasonably low (maybe 30 seconds?) as that may be annoying for the other players, find a balance or turn reminders off. I personally play with join_alerts on but no chat_reminders at a period of 10 seconds.
-`key` - Which key the program will use to run commands. Most source engine key names will be recognized, if it doesn't recognize the key you entered it will default to F8 and print in the window when run. It is recommended to use a key that isn't used much by other programs such as F8, as to avoid it potentially being annoying if it is pressed when you have the game tabbed-out or similar. 
+`key` - Which key the program will use to run commands. Most source engine key names will be recognized, if it doesn't recognize the key you entered it will default to F8 and print in the window when run.
 
+Notes:\
+1. I encourage you to not leave chat_reminders on if the period is reasonably low (maybe 30 seconds?) as that may be annoying for the other players, find a balance or turn reminders off. I personally play with join_alerts on but no chat_reminders at a period of 10 seconds.\
+2. It is recommended to use a key that isn't used much by other programs such as F8, as to avoid it potentially being annoying if it is pressed when you have the game tabbed-out or similar. 
 
 # Building
 This program should build without issue through Cargo on Windows, on Linux it should build provided the libraries listed above are installed.
