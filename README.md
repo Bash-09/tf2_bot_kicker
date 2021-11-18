@@ -1,6 +1,5 @@
 # tf2_bot_kicker
-A (mostly) cross-platform bot identifier/kicker written in Rust.
-(May not support Wayland)
+A (somewhat) cross-platform bot identifier/kicker written in Rust.
 
 A version with a Graphical User Interface can be found at the [tf2-bot-kicker-gui](https://github.com/Jenga500/tf2-bot-kicker-gui) repository, courtesy of [Jenga500](https://github.com/Jenga500)!
 
@@ -9,13 +8,36 @@ A version with a Graphical User Interface can be found at the [tf2-bot-kicker-gu
 
 Download the [command line program](https://github.com/Googe14/tf2_bot_kicker/releases) or the [graphical user interface program](https://github.com/Jenga500/tf2-bot-kicker-gui/releases).
 
-1. Add `bind F7 "exec command"` to your TF2 autoexec.cfg
+1. Add `bind F8 "exec command"` to your TF2 autoexec.cfg
 2. Add `-condebug -conclearlog` to your Steam TF2 launch options. (Right click Team Fortress 2 in your Steam library, select Properties, and paste into the Launch Options section)
 3. Make sure the TF2 directory is correct in `cfg/settings.cfg` or on the gui program
 4. Launch TF2.
 5. Run the program.
 
 If the program fails to run, most likely it could not find your TF2 directory, ensure it is set correctly in cfg/settings.cfg. If this is troublesome, the program can also be run from directly inside the Team Fortress 2 folder without configuring the directory setting.
+
+# Running the Program
+
+## Windows
+
+Provided you have set the appropriate keybind in your TF2 `autoexec.cfg`, and have the directory correct in `settings.cfg`, the program should run without issue.
+
+## Linux
+
+Linux users may have to install some of the following packages. (As listed in the Ubuntu repository)
+
+`libx11-dev`\
+`libxtst-dev`\
+`libudev-dev`\
+`libinput-dev`
+
+X11 environments should run fine once the appropriate packes are isntalled, you have set the appropriate keybind in your TF2 `autoexec.cfg`, and have the directory correct in `settings.cfg`.
+
+### Wayland
+
+Some Wayland environments will not allow `libinput` access to `/dev/uinput` without root.
+
+To fix this you can either run the tf2_bot_kicker as root with sudo, or grant access to `/dev/uinput` with `chmod +0666 /dev/uinput` before running the program (This command will not persist after restart and will need to be run each time before using this program, for a more permanent solution you can follow the instructions under "Without X11" at https://crates.io/crates/tfc).
 
 
 # Settings and Configuration
@@ -28,11 +50,11 @@ Inside the cfg folder is settings.cfg, you can change some basic settings here.\
 `kick` - true/false if you want to automatically call votekicks on bots.\
 `period` - Integer Time in seconds between actions (each alert/kick attempt)\
 Note: I encourage you to not leave chat_reminders on if the period is reasonably low (maybe 30 seconds?) as that may be annoying for the other players, find a balance or turn reminders off. I personally play with join_alerts on but no chat_reminders at a period of 10 seconds.
+`key` - Which key the program will use to run commands. Most source engine key names will be recognized, if it doesn't recognize the key you entered it will default to F8 and print in the window when run. It is recommended to use a key that isn't used much by other programs such as F8, as to avoid it potentially being annoying if it is pressed when you have the game tabbed-out or similar. 
 
 
-# Compiling
-
-I believe this should build without issue using Cargo on Windows, on Linux you may have to install libxdo. 
+# Building
+This program should build without issue through Cargo on Windows, on Linux it should build provided the libraries listed above are installed.
 
 
 # Additional Information
@@ -45,13 +67,12 @@ This file has a few different sections:
 
 `name:` - Under here are exact names to check for\
 `regex:` - Checks for names that match the given regex, more reliable than the name section as if multiple of the same bot join the name will be prefixed with (1,2,3,etc) and won't match the name anymore, can also account for some cheeky names that have invisible characters hidden in them randomly etc.\
-`uuid:` - Has SteamIDs of known bot accounts, this currently only supports SteamID3.\
+`uuid:` - Has SteamIDs of known bot accounts, this only supports SteamID3.\
 `list:` - This has files which contain a number of SteamIDs to add to the list.\
 
 
 ## How it works
   
-By adding `-condebug -conclearlog` to your TF2 launch options, the game outputs all contents of the in-game console to a file `console.log` in real-time (and also clears it when you start the game so it doesn't get too big). This program watches that file to get some live information about the game, including the steamid, name and (kind of) team of each player if the `status` and `tf_lobby_debug` commands are run. Since your F7 key is bound to `"exec command"`, if there are commands written to the file commands.cfg then they will be run when the F7 key is pressed, that means this program can then run commands in the game by writing commands to that file and simulating the player pressing the key. Periodically, the program runs the `status` and `tf_lobby_debug` commands to get information on the current players, checks if any of them are bots according to the rules specified in `bots.cfg`, and if they are then it runs commands to send messages in chat and/or call a votekick on accounts identified as bots. That is all, no hacked client required!
+When you add `-condebug -conclearlog` to your TF2 launch options, it makes the game output the contents of the in-game console to a file called `console.log` in real-time. We can watch this file for certain details about the game such as players joining and connected, their SteamIDs, which team they are on (kind of) and how long they have been connected. The Source engine also has a nice feature of being able to run commands from cfg files from the console, so if we bind a key to run a particular cfg file, we can write our own commands to that file in the background and hit that bound key to run the commands. This program will automatically simulate the player pressing this button periodically so that it can run in-game commands like `status` and `tf_lobby_debug` to gather information, send chat messages, and call votekicks without need for any sort of hacks or illegal modifications to the game. Everything is just through config files and keyboard presses.
 
-# Credits
-This project makes use of modified code from the [Logwatcher](https://github.com/aravindavk/logwatcher) crate.
+Using information from the `status` command, players have their names and SteamIDs checked against rules that are written in the `bots.cfg` file. If a player is identified as a bot, it is printed in the program window and does any actions you might have enabled in your `settings.cfg` like trying to kick them or alerting players of the bot's presence.

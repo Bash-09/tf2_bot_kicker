@@ -1,20 +1,23 @@
 use std::fs::{read_dir, File, OpenOptions};
 use std::io::prelude::*;
 
-extern crate enigo;
-use enigo::{Enigo, Key, KeyboardControllable};
+extern crate inputbot;
+use inputbot::KeybdKey;
 
 use crate::server::player::Player;
+use crate::server::settings::Settings;
 
 pub struct Commander {
     file: File,
     file_name: String,
-    key: Key,
-    keyboard: Enigo,
 }
 
 impl Commander {
     pub fn new(directory: &str) -> Commander {
+
+        #[cfg(not(windows))]
+        inputbot::init_device();
+
         let dir: String = directory.to_string();
 
         if !check_directory(directory) {
@@ -30,8 +33,6 @@ impl Commander {
         Commander {
             file: create_command_file(&file_name),
             file_name,
-            key: Key::F7,
-            keyboard: Enigo::new(),
         }
     }
 
@@ -59,23 +60,24 @@ impl Commander {
     }
 
     /// Runs all queued commands
-    pub fn run(&mut self) {
-        self.keyboard.key_click(self.key);
+    pub fn run(&self, key: &KeybdKey) {
+        key.press();
+        key.release();
     }
 
     /// Clears queue and runs a command
-    pub fn run_command(&mut self, command: &str) {
+    pub fn run_command(&mut self, command: &str, key: &KeybdKey) {
         self.clear();
         self.push(command);
-        self.run();
+        self.run(key);
     }
 
-    pub fn say(&mut self, s: &str) {
-        self.run_command(&format!("say \"{}\"", s));
+    pub fn say(&mut self, s: &str, settings: &Settings) {
+        self.run_command(&format!("say \"{}\"", s), &settings.key);
     }
 
-    pub fn kick(&mut self, p: &Player) {
-        self.run_command(&format!("callvote kick {}", p.userid));
+    pub fn kick(&mut self, p: &Player, settings: &Settings) {
+        self.run_command(&format!("callvote kick {}", p.userid), &settings.key);
     }
 }
 

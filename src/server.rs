@@ -12,7 +12,7 @@ use bot_checker::BotChecker;
 use crate::commander::Commander;
 use crate::server::player::State;
 
-mod settings;
+pub mod settings;
 use settings::Settings;
 
 pub const COM_STATUS: &str = "status";
@@ -102,11 +102,11 @@ impl Server {
         for p in bots {
             match &self.settings.user {
                 None => {
-                    self.com.kick(p);
+                    self.com.kick(p, &self.settings);
                 }
                 Some(id) => {
                     if p.team == self.players.get(id).unwrap().team {
-                        self.com.kick(p);
+                        self.com.kick(p, &self.settings);
                     }
                 }
             }
@@ -233,7 +233,7 @@ impl Server {
         }
 
         // Broadcast message
-        self.com.say(&alert);
+        self.com.say(&alert, &self.settings);
     }
 
     /// Update local info on server players
@@ -250,7 +250,7 @@ impl Server {
         self.com.push(COM_LOBBY);
         self.com.push("wait 100");
         self.com.push("echo refreshcomplete");
-        self.com.run();
+        self.com.run(&self.settings.key);
     }
 
     /// Remove players who aren't present on the server anymore
@@ -263,6 +263,6 @@ impl Server {
             v.accounted
         });
 
-        self.com.run_command("wait 100; echo prunecomplete");
+        self.com.run_command("wait 100; echo prunecomplete", &self.settings.key);
     }
 }

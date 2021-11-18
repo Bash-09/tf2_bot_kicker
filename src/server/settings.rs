@@ -1,3 +1,4 @@
+use inputbot::KeybdKey;
 use regex::Regex;
 use std::{fs::File, io::Read};
 
@@ -8,6 +9,7 @@ pub struct Settings {
     pub kick: bool,
     pub period: u32,
     pub directory: String,
+    pub key: KeybdKey,
 }
 
 impl Settings {
@@ -18,6 +20,7 @@ impl Settings {
         let mut kick = true;
         let mut period: u32 = 15;
         let mut directory: String = String::from(".");
+        let mut key = KeybdKey::F7Key;
 
         let filename = "cfg/settings.cfg";
 
@@ -73,6 +76,10 @@ impl Settings {
                     "tf2_directory" => {
                         directory = caps["value"].to_string();
                     }
+                    "key" => {
+                        key = get_key(&caps["value"]);
+                        println!("Settings key to {:?}", key);
+                    }
                     _ => {}
                 }
             }
@@ -85,6 +92,7 @@ impl Settings {
             kick,
             period,
             directory,
+            key,
         }
     }
 }
@@ -103,5 +111,75 @@ fn to_bool(s: &str) -> Option<bool> {
         "true" => Some(true),
         "false" => Some(false),
         _ => None,
+    }
+}
+
+fn get_key(str: &str) -> KeybdKey {
+    match str.to_ascii_lowercase().trim() {
+        "backspace" => KeybdKey::BackspaceKey,
+        "tab" => KeybdKey::TabKey,
+        "enter" => KeybdKey::EnterKey,
+        "escape" => KeybdKey::EscapeKey,
+        "space" => KeybdKey::SpaceKey,
+        "home" => KeybdKey::HomeKey,
+        "left" | "leftarrow" => KeybdKey::LeftKey,
+        "up" | "uparrow" => KeybdKey::UpKey,
+        "right" | "rightarrow" => KeybdKey::RightKey,
+        "down" | "downarrow" => KeybdKey::DownKey,
+        "ins" | "insert" => KeybdKey::InsertKey,
+        "del" | "delete" => KeybdKey::DeleteKey,
+        "np0" | "numpad0" | "kp_ins" => KeybdKey::Numpad0Key,
+        "np1" | "numpad1" | "kp_end" => KeybdKey::Numpad1Key,
+        "np2" | "numpad2" | "kp_downarrow" => KeybdKey::Numpad2Key,
+        "np3" | "numpad3" | "kp_pgdn" => KeybdKey::Numpad3Key,
+        "np4" | "numpad4" | "kp_leftarrow" => KeybdKey::Numpad4Key,
+        "np5" | "numpad5" | "kp_5" => KeybdKey::Numpad5Key,
+        "np6" | "numpad6" | "kp_rightarrow" => KeybdKey::Numpad6Key,
+        "np7" | "numpad7" | "kp_home" => KeybdKey::Numpad7Key,
+        "np8" | "numpad8" | "kp_uparrow" => KeybdKey::Numpad8Key,
+        "np9" | "numpad9" | "kp_pgup" => KeybdKey::Numpad9Key,
+        "a" => KeybdKey::AKey,
+        "b" => KeybdKey::BKey,
+        "c" => KeybdKey::CKey,
+        "d" => KeybdKey::DKey,
+        "e" => KeybdKey::EKey,
+        "f" => KeybdKey::FKey,
+        "g" => KeybdKey::GKey,
+        "h" => KeybdKey::HKey,
+        "i" => KeybdKey::IKey,
+        "j" => KeybdKey::JKey,
+        "k" => KeybdKey::KKey,
+        "l" => KeybdKey::LKey,
+        "m" => KeybdKey::MKey,
+        "n" => KeybdKey::NKey,
+        "o" => KeybdKey::OKey,
+        "p" => KeybdKey::PKey,
+        "q" => KeybdKey::QKey,
+        "r" => KeybdKey::RKey,
+        "s" => KeybdKey::SKey,
+        "t" => KeybdKey::TKey,
+        "u" => KeybdKey::UKey,
+        "v" => KeybdKey::VKey,
+        "w" => KeybdKey::WKey,
+        "x" => KeybdKey::XKey,
+        "y" => KeybdKey::YKey,
+        "z" => KeybdKey::ZKey,
+        "f1" => KeybdKey::F1Key,
+        "f2" => KeybdKey::F2Key,
+        "f3" => KeybdKey::F3Key,
+        "f4" => KeybdKey::F4Key,
+        "f5" => KeybdKey::F5Key,
+        "f6" => KeybdKey::F6Key,
+        "f7" => KeybdKey::F7Key,
+        "f8" => KeybdKey::F8Key,
+        "f9" => KeybdKey::F9Key,
+        "f10" => KeybdKey::F10Key,
+        "f11" => KeybdKey::F11Key,
+        "f12" => KeybdKey::F12Key,
+        "numlock" => KeybdKey::NumLockKey,
+        "scrolllock" => KeybdKey::ScrollLockKey,
+        "capslock" | "caps" => KeybdKey::CapsLockKey,
+        "shift" | "lshift" => KeybdKey::LShiftKey,
+        _ => KeybdKey::F7Key
     }
 }
