@@ -51,8 +51,8 @@ Inside the cfg folder is settings.cfg, you can change some basic settings here.\
 `period` - Integer Time in seconds between actions (each alert/kick attempt)\
 `key` - Which key the program will use to run commands. Most source engine key names will be recognized, if it doesn't recognize the key you entered it will default to F8 and print in the window when run.
 
-Notes:\
-1. I encourage you to not leave chat_reminders on if the period is reasonably low (maybe 30 seconds?) as that may be annoying for the other players, find a balance or turn reminders off. I personally play with join_alerts on but no chat_reminders at a period of 10 seconds.\
+Notes:
+1. I encourage you to not leave chat_reminders on if the period is reasonably low (maybe 30 seconds?) as that may be annoying for the other players, find a balance or turn reminders off. I personally play with no chat_reminders or join_alerts at a period of 10 seconds.
 2. It is recommended to use a key that isn't used much by other programs such as F8, as to avoid it potentially being annoying if it is pressed when you have the game tabbed-out or similar. 
 
 # Building
