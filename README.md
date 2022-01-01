@@ -1,4 +1,7 @@
 # tf2_bot_kicker
+
+## Soon to be deprecated by [tf2-bot-kicker-gui](https://github.com/Googe14/tf2-bot-kicker-gui)
+
 A (somewhat) cross-platform bot identifier/kicker written in Rust.
 
 A version with a Graphical User Interface can be found at the [tf2-bot-kicker-gui](https://github.com/Jenga500/tf2-bot-kicker-gui) repository, courtesy of [Jenga500](https://github.com/Jenga500)!
