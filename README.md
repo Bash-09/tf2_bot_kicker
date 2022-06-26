@@ -1,6 +1,6 @@
 # tf2_bot_kicker
 
-## This project has been deprecated by [tf2-bot-kicker-gui](https://github.com/Googe14/tf2-bot-kicker-gui)
+## This project has been deprecated by [tf2-bot-kicker-gui](https://github.com/Bash-09/tf2-bot-kicker-gui)
 
 An improved version featuring a GUI and many quality of life improvements for a much nicer experience.
 
@@ -13,7 +13,7 @@ A version with a Graphical User Interface can be found at the [tf2-bot-kicker-gu
 
 # Usage
 
-Download the [command line program](https://github.com/Googe14/tf2_bot_kicker/releases) or the [graphical user interface program](https://github.com/Jenga500/tf2-bot-kicker-gui/releases).
+Download the [command line program](https://github.com/Bash-09/tf2_bot_kicker/releases) or the [graphical user interface program](https://github.com/Jenga500/tf2-bot-kicker-gui/releases).
 
 1. Add `bind F8 "exec command"` to your TF2 autoexec.cfg
 2. Add `-condebug -conclearlog` to your Steam TF2 launch options. (Right click Team Fortress 2 in your Steam library, select Properties, and paste into the Launch Options section)
